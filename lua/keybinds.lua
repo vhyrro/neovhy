@@ -80,3 +80,21 @@ vim.api.nvim_set_keymap('n', "<Leader>gd", ":ProDoc<CR>", { silent = true })
 -- Keybinds for toggleterm.lua
 vim.api.nvim_set_keymap('n', "<Leader>shf", ":lua require('toggleterm.terminal').Terminal:new { direction = 'float' }:toggle()<CR>", { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', "<Leader>shr", ":lua require('toggleterm.terminal').Terminal:new { direction = 'vertical' }:toggle()<CR>", { noremap = true, silent = true })
+
+-- Keybinds for treesitter-textobjects
+vim.api.nvim_set_keymap('n', "gnif", ":TSTextobjectGotoNextStart @function.inner<CR>", { silent = true })
+vim.api.nvim_set_keymap('n', "gnf", ":TSTextobjectGotoNextStart @function.outer<CR>", { silent = true })
+vim.api.nvim_set_keymap('n', "gnef", ":TSTextobjectGotoNextEnd @function.outer<CR>", { silent = true })
+vim.api.nvim_set_keymap('n', "gneif", ":TSTextobjectGotoNextEnd @function.inner<CR>", { silent = true })
+
+
+vim.api.nvim_set_keymap('n', "gpif", ":TSTextobjectGotoPreviousStart @function.inner<CR>", { silent = true })
+vim.api.nvim_set_keymap('n', "gpf", ":TSTextobjectGotoPreviousStart @function.outer<CR>", { silent = true })
+vim.api.nvim_set_keymap('n', "gpef", ":TSTextobjectGotoPreviousEnd @function.outer<CR>", { silent = true })
+vim.api.nvim_set_keymap('n', "gpeif", ":TSTextobjectGotoPreviousEnd @function.inner<CR>", { silent = true })
+
+
+--[[ vim.api.nvim_set_keymap('n', "gNif", ":TSTextobjectGotoPreviousStart @function.inner<CR>", { silent = true })
+vim.api.nvim_set_keymap('n', "gNf", ":TSTextobjectGotoPreviousStart @function.outer<CR>", { silent = true })
+vim.api.nvim_set_keymap('n', "gNef", ":TSTextobjectGotoPreviousEnd @function.outer<CR>", { silent = true })
+vim.api.nvim_set_keymap('n', "gNeif", ":TSTextobjectGotoPreviousEnd @function.inner<CR>", { silent = true }) ]]

@@ -398,6 +398,18 @@ packer.startup(function(use)
 	}
 
 	use {
+		"b3nj5m1n/kommentary",
+		setup = function()
+			vim.g.kommentary_create_default_mappings = false
+		end,
+		config = function()
+			vim.api.nvim_set_keymap("n", "<Leader>/", "<Plug>kommentary_line_default", {})
+			vim.api.nvim_set_keymap("v", "<Leader>/", "<Plug>kommentary_visual_default", {})
+		end,
+		keys = { { "n", vim.api.nvim_replace_termcodes("<Leader>/", true, true, true) }, { "v", vim.api.nvim_replace_termcodes("<Leader>/", true, true, true) } }
+	}
+
+	use {
 		"kevinhwang91/nvim-bqf",
 		event = "ColorScheme"
 	}
