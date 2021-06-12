@@ -28,4 +28,6 @@ vim.defer_fn(vim.schedule_wrap(function()
 		filetype plugin indent on
 		PackerLoad nvim-treesitter
 	]]
+
+	vim.defer_fn(function() vim.cmd [[ PackerLoad gruvbox-material ]] end, 15)
 end), 0)

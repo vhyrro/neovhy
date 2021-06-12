@@ -3,7 +3,7 @@
 local install_path = vim.fn.stdpath("data") .. "/site/pack/packer/opt/packer.nvim"
 
 if vim.fn.empty(vim.fn.glob(install_path)) > 0 then
-  vim.cmd("!git clone https://github.com/wbthomason/packer.nvim " .. install_path)
+  	vim.cmd("!git clone https://github.com/wbthomason/packer.nvim " .. install_path)
 end
 
 vim.cmd("packadd packer.nvim")
@@ -40,7 +40,14 @@ packer.startup(function(use)
 				},
 
 				incremental_selection = {
-					enable = true
+					enable = true,
+
+      				keymaps = {
+        				init_selection = "gnn",
+        				node_incremental = "gnn",
+        				scope_incremental = "gns",
+        				node_decremental = "gnp",
+      				},
 				},
 
 				indent = {
@@ -64,11 +71,12 @@ packer.startup(function(use)
       	  	  	  	  	keymaps = {
         					["af"] = "@function.outer",
         					["if"] = "@function.inner",
-        					["ic"] = "@conditional.inner",
-        					["ac"] = "@comment.outer",
-        					["il"] = "@loop.inner",
-        					["al"] = "@loop.outer",
-        					["is"] = "@scopename.inner",
+        					["icn"] = "@conditional.inner",
+        					["acn"] = "@conditional.outer",
+        					["acm"] = "@comment.outer",
+        					["ilp"] = "@loop.inner",
+        					["alp"] = "@loop.outer",
+        					["isc"] = "@scopename.inner",
       	  	  	  	  	},
     				},
   	  	  	  	},
@@ -89,7 +97,15 @@ packer.startup(function(use)
       					goto_node = '<cr>',
       					show_help = '?',
     				},
-  				}
+  				},
+
+				tree_docs = {
+					enable = true
+				},
+
+				context_commentstring = {
+    				enable = true
+  	  	  	  	}
 			}
 		end
 	}
@@ -105,13 +121,24 @@ packer.startup(function(use)
 	}
 
 	use {
-		"nvim-treesitter/playground",
+		"JoosepAlviste/nvim-ts-context-commentstring",
+		requires = { { "Olical/aniseed", after = "nvim-treesitter" } },
+		after = "nvim-treesitter",
+	}
+
+	use {
+		"nvim-treesitter/nvim-tree-docs",
 		after = "nvim-treesitter"
 	}
 
 	use {
+		"nvim-treesitter/playground",
+		cmd = "TSPlaygroundToggle"
+	}
+
+	use {
 		"sainnhe/gruvbox-material",
-		after = "nvim-treesitter",
+		opt = true,
 		config = function()
 			vim.cmd("colorscheme gruvbox-material")
 		end
@@ -119,7 +146,7 @@ packer.startup(function(use)
 
 	use {
 		"windwp/nvim-autopairs",
-		after = "nvim-treesitter",
+		event = "ColorScheme",
 		config = function()
 			require('nvim-autopairs').setup { check_ts = true }
 		end
@@ -127,7 +154,7 @@ packer.startup(function(use)
 
 	use {
 		"monaqa/dial.nvim",
-		after = "gruvbox-material"
+		event = "ColorScheme",
 	}
 
 	use {
@@ -153,25 +180,25 @@ packer.startup(function(use)
 		after = "nvim-treesitter",
 		config = function()
 			require('iswap').setup {
-			  -- The keys that will be used as a selection, in order
-			  -- ('asdfghjklqwertyuiopzxcvbnm' by default)
-			  keys = 'ashtgyneoi',
+			  	-- The keys that will be used as a selection, in order
+			  	-- ('asdfghjklqwertyuiopzxcvbnm' by default)
+			  	keys = 'ashtgyneoi',
 
-			  -- Grey out the rest of the text when making a selection
-			  -- (enabled by default)
-			  grey = 'disable',
+			  	-- Grey out the rest of the text when making a selection
+			  	-- (enabled by default)
+			  	grey = 'disable',
 
-			  -- Highlight group for the sniping value (asdf etc.)
-			  -- default 'Search'
-			  hl_snipe = 'Search',
+			  	-- Highlight group for the sniping value (asdf etc.)
+			  	-- default 'Search'
+			  	hl_snipe = 'Search',
 
-			  -- Highlight group for the visual selection of terms
-			  -- default 'Visual'
-			  hl_selection = 'Visual',
+			  	-- Highlight group for the visual selection of terms
+			  	-- default 'Visual'
+			  	hl_selection = 'Visual',
 
-			  -- Highlight group for the greyed background
-			  -- default 'Comment'
-			  hl_grey = 'Comment'
+			  	-- Highlight group for the greyed background
+			  	-- default 'Comment'
+			  	hl_grey = 'Comment'
 			}
 		end
 	}
@@ -221,31 +248,31 @@ packer.startup(function(use)
 
 			vim.g.nvim_tree_bindings = {
 
-				  ["o"]              = tree_cb("edit"),
-				  ["<2-LeftMouse>"]  = tree_cb("edit"),
-				  ["<2-RightMouse>"] = tree_cb("cd"),
-				  [","]              = tree_cb("cd"),
-				  ["<C-v>"]          = tree_cb("vsplit"),
-				  ["<C-x>"]          = tree_cb("split"),
-				  ["<C-t>"]          = tree_cb("tabnew"),
-				  ["K"]              = tree_cb("prev_sibling"),
-				  ["J"]              = tree_cb("next_sibling"),
-				  ["O"]              = tree_cb("close_node"),
-				  ["<Tab>"]          = tree_cb("preview"),
-				  ["I"]              = tree_cb("toggle_ignored"),
-				  ["H"]              = tree_cb("toggle_dotfiles"),
-				  ["R"]              = tree_cb("refresh"),
-				  ["a"]              = tree_cb("create"),
-				  ["d"]              = tree_cb("remove"),
-				  ["r"]              = tree_cb("rename"),
-				  ["<C-r>"]          = tree_cb("full_rename"),
-				  ["x"]              = tree_cb("cut"),
-				  ["c"]              = tree_cb("copy"),
-				  ["p"]              = tree_cb("paste"),
-				  ["[c"]             = tree_cb("prev_git_item"),
-				  ["]c"]             = tree_cb("next_git_item"),
-				  ["<"]              = tree_cb("dir_up"),
-				  ["q"]              = tree_cb("close"),
+				["o"]              = tree_cb("edit"),
+				["<2-LeftMouse>"]  = tree_cb("edit"),
+				["<2-RightMouse>"] = tree_cb("cd"),
+				[","]              = tree_cb("cd"),
+				["<C-v>"]          = tree_cb("vsplit"),
+				["<C-x>"]          = tree_cb("split"),
+				["<C-t>"]          = tree_cb("tabnew"),
+				["K"]              = tree_cb("prev_sibling"),
+				["J"]              = tree_cb("next_sibling"),
+				["O"]              = tree_cb("close_node"),
+				["<Tab>"]          = tree_cb("preview"),
+				["I"]              = tree_cb("toggle_ignored"),
+				["H"]              = tree_cb("toggle_dotfiles"),
+				["R"]              = tree_cb("refresh"),
+				["a"]              = tree_cb("create"),
+				["d"]              = tree_cb("remove"),
+				["r"]              = tree_cb("rename"),
+				["<C-r>"]          = tree_cb("full_rename"),
+				["x"]              = tree_cb("cut"),
+				["c"]              = tree_cb("copy"),
+				["p"]              = tree_cb("paste"),
+				["[c"]             = tree_cb("prev_git_item"),
+				["]c"]             = tree_cb("next_git_item"),
+				["<"]              = tree_cb("dir_up"),
+				["q"]              = tree_cb("close"),
 
 			}
 
