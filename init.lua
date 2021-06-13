@@ -29,5 +29,10 @@ vim.defer_fn(vim.schedule_wrap(function()
 		PackerLoad nvim-treesitter
 	]]
 
-	vim.defer_fn(function() vim.cmd [[ PackerLoad gruvbox-material ]] end, 15)
+	vim.defer_fn(function() 
+		vim.cmd [[ 
+			PackerLoad gruvbox-material
+			silent! bufdo e
+		]]
+	end, 15)
 end), 0)

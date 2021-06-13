@@ -1,10 +1,18 @@
 -- File full of juicy keybinds
 
+-- Generic keys for Neovim
 vim.api.nvim_set_keymap('n', "<Esc>", ":noh<CR>", { noremap = true, silent = true })
+
+-- Prevent changes made to text from landing in the default registers
 vim.api.nvim_set_keymap('n', "c", "\"_c", { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', "C", "\"_C", { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', "s", "\"_s", { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', "S", "\"_S", { noremap = true, silent = true })
+
+-- Execute a block of code when it is selected
+vim.api.nvim_set_keymap('v', "<M-x>", ":source<CR>", { silent = true })
+-- Execute a paragraph of code (note: when treesitter textobjects become stable use them instead of `vip`)
+vim.api.nvim_set_keymap('n', "<M-x>", "vip:source<CR><Esc>", { silent = true })
 
 -- Keymaps for managing and navigating through splits
 vim.api.nvim_set_keymap('n', "<C-h>", "<C-w><C-h>", { noremap = true })
@@ -43,7 +51,8 @@ vim.api.nvim_set_keymap('n', "<Leader>lg", ":Telescope live_grep<CR>", { silent 
 vim.api.nvim_set_keymap('n', "<Leader>mp", ":Telescope man_pages<CR>", { silent = true })
 vim.api.nvim_set_keymap('n', "<Leader>ff", ":Telescope find_files<CR>", { silent = true })
 vim.api.nvim_set_keymap('n', "<Leader>fh", ":Telescope help_tags<CR>", { silent = true })
-vim.api.nvim_set_keymap('n', "<Leader>b", ":Telescope buffers<CR>", { silent = true })
+vim.api.nvim_set_keymap('n', "<Leader>fb", ":Telescope buffers<CR>", { silent = true })
+vim.api.nvim_set_keymap('n', "<Leader>fo", ":Telescope oldfiles<CR>", { silent = true })
 
 -- Toggle nvim-tree
 vim.api.nvim_set_keymap('n', "<Leader>t", ":NvimTreeToggle<CR>", { noremap = true, silent = true })
@@ -55,22 +64,6 @@ vim.api.nvim_set_keymap('n', "<C-x>", "<Plug>(dial-decrement)", { silent = true 
 vim.api.nvim_set_keymap('v', "<C-a>", "<Plug>(dial-increment)", { silent = true })
 vim.api.nvim_set_keymap('v', "<C-x>", "<Plug>(dial-decrement)", { silent = true })
 
--- Keybindings for lspsaga
-vim.api.nvim_set_keymap('n', "<Leader>ca", ":lua require('lspsaga.codeaction').code_action()<CR>", { noremap = true, silent = true })
-vim.api.nvim_set_keymap('v', "<Leader>ca", ":lua require('lspsaga.codeaction').range_code_action()<CR>", { noremap = true, silent = true })
-
-vim.api.nvim_set_keymap('n', "K", ":lua require('lspsaga.hover').render_hover_doc()<CR>", { noremap = true, silent = true })
-vim.api.nvim_set_keymap('n', "<C-k>", ":lua require('lspsaga.signaturehelp').signature_help()<CR>", { noremap = true, silent = true })
-
-vim.api.nvim_set_keymap('n', "<Leader>rn", ":lua require('lspsaga.rename').rename()<CR>", { noremap = true, silent = true })
-
-vim.api.nvim_set_keymap('n', "<Leader>pd", ":lua require('lspsaga.provider').preview_definition()<CR>", { noremap = true, silent = true })
-
-vim.api.nvim_set_keymap('n', "<Leader>cd", ":lua require('lspsaga.diagnostic').show_line_diagnostics()<CR>", { noremap = true, silent = true })
-
-vim.api.nvim_set_keymap('n', "ge", ":lua require('lspsaga.diagnostic').lsp_jump_diagnostic_next()<CR>", { noremap = true, silent = true })
-vim.api.nvim_set_keymap('n', "gE", ":lua require('lspsaga.diagnostic').lsp_jump_diagnostic_prev()<CR>", { noremap = true, silent = true })
-
 -- Trigger neogit
 vim.api.nvim_set_keymap('n', "<Leader>ng", ":Neogit<CR>", { silent = true, noremap = true })
 
@@ -81,20 +74,27 @@ vim.api.nvim_set_keymap('n', "<Leader>gd", ":ProDoc<CR>", { silent = true })
 vim.api.nvim_set_keymap('n', "<Leader>shf", ":lua require('toggleterm.terminal').Terminal:new { direction = 'float' }:toggle()<CR>", { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', "<Leader>shr", ":lua require('toggleterm.terminal').Terminal:new { direction = 'vertical' }:toggle()<CR>", { noremap = true, silent = true })
 
--- Keybinds for treesitter-textobjects
-vim.api.nvim_set_keymap('n', "gnif", ":TSTextobjectGotoNextStart @function.inner<CR>", { silent = true })
-vim.api.nvim_set_keymap('n', "gnf", ":TSTextobjectGotoNextStart @function.outer<CR>", { silent = true })
-vim.api.nvim_set_keymap('n', "gnef", ":TSTextobjectGotoNextEnd @function.outer<CR>", { silent = true })
-vim.api.nvim_set_keymap('n', "gneif", ":TSTextobjectGotoNextEnd @function.inner<CR>", { silent = true })
+-- Keybinds for nvim-dap
+vim.api.nvim_set_keymap('n', "<F5>", ":lua require('dap').continue()<CR>", { silent = true })
+vim.api.nvim_set_keymap('n', "<F10>", ":lua require('dap').step_over()<CR>", { silent = true })
+vim.api.nvim_set_keymap('n', "<F11>", ":lua require('dap').step_into()<CR>", { silent = true })
+vim.api.nvim_set_keymap('n', "<F11>", ":lua require('dap').step_out()<CR>", { silent = true })
+vim.api.nvim_set_keymap('n', "<Leader>b", ":lua require('dap').toggle_breakpoint()<CR>", { silent = true })
+vim.api.nvim_set_keymap('n', "<Leader>cb", ":lua require('dap').toggle_breakpoint(vim.fn.input(\"Condition: \"))<CR>", { silent = true })
+vim.api.nvim_set_keymap('n', "<Leader>rpl", ":lua require('dap').repl.toggle()<CR>", { silent = true })
 
+-- Keybindings for nvim-compe + LuaSnip
+vim.api.nvim_set_keymap('i', "<CR>", "compe#confirm('<CR>')", { silent = true, expr = true })
+vim.api.nvim_set_keymap('i', "<C-t>", "compe#confirm('<C-t>')", { silent = true, expr = true })
 
-vim.api.nvim_set_keymap('n', "gpif", ":TSTextobjectGotoPreviousStart @function.inner<CR>", { silent = true })
-vim.api.nvim_set_keymap('n', "gpf", ":TSTextobjectGotoPreviousStart @function.outer<CR>", { silent = true })
-vim.api.nvim_set_keymap('n', "gpef", ":TSTextobjectGotoPreviousEnd @function.outer<CR>", { silent = true })
-vim.api.nvim_set_keymap('n', "gpeif", ":TSTextobjectGotoPreviousEnd @function.inner<CR>", { silent = true })
+vim.api.nvim_set_keymap('i', "<Tab>", "luasnip#expand_or_jumpable() ? \'<Plug>luasnip-expand-or-jump\' : \'<Tab>\'", { silent = true, expr = true })
+vim.api.nvim_set_keymap('i', "<S-Tab>", "<cmd>lua require('luasnip').jump(-1)<CR>", { silent = true })
 
+vim.api.nvim_set_keymap('s', "<Tab>", "<cmd>lua require('luasnip').jump(1)<CR>", { silent = true })
+vim.api.nvim_set_keymap('s', "<S-Tab>", "<cmd>lua require('luasnip').jump(-1)<CR>", { silent = true })
 
---[[ vim.api.nvim_set_keymap('n', "gNif", ":TSTextobjectGotoPreviousStart @function.inner<CR>", { silent = true })
-vim.api.nvim_set_keymap('n', "gNf", ":TSTextobjectGotoPreviousStart @function.outer<CR>", { silent = true })
-vim.api.nvim_set_keymap('n', "gNef", ":TSTextobjectGotoPreviousEnd @function.outer<CR>", { silent = true })
-vim.api.nvim_set_keymap('n', "gNeif", ":TSTextobjectGotoPreviousEnd @function.inner<CR>", { silent = true }) ]]
+-- Keybindings for ISwap.nvim
+vim.api.nvim_set_keymap('n', "<Leader>sp", ":ISwap<CR>", { silent = true })
+
+-- Keybindings for SymbolsOutline.nvim
+vim.api.nvim_set_keymap('n', "<Leader>so", ":SymbolsOutline<CR>", { silent = true })

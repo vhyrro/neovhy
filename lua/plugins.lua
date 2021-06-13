@@ -71,13 +71,50 @@ packer.startup(function(use)
       	  	  	  	  	keymaps = {
         					["af"] = "@function.outer",
         					["if"] = "@function.inner",
-        					["icn"] = "@conditional.inner",
-        					["acn"] = "@conditional.outer",
+        					["icd"] = "@conditional.inner",
+        					["acd"] = "@conditional.outer",
         					["acm"] = "@comment.outer",
         					["ilp"] = "@loop.inner",
         					["alp"] = "@loop.outer",
+        					["ast"] = "@statement.outer",
         					["isc"] = "@scopename.inner",
+        					["iB"] = "@block.inner",
+        					["aB"] = "@block.outer",
+        					["p"] = "@parameter.inner",
       	  	  	  	  	},
+    				},
+
+					move = {
+      					enable = true,
+      					set_jumps = true, -- Whether to set jumps in the jumplist
+      					goto_next_start = {
+        					["gnf"] = "@function.outer",
+        					["gnif"] = "@function.inner",
+        					["gnp"] = "@parameter.inner",
+        					["gnc"] = "@call.outer",
+        					["gnic"] = "@call.inner",
+      					},
+      					goto_next_end = {
+        					["gnF"] = "@function.outer",
+        					["gniF"] = "@function.inner",
+        					["gnP"] = "@parameter.inner",
+        					["gnC"] = "@call.outer",
+        					["gniC"] = "@call.inner",
+      					},
+      					goto_previous_start = {
+        					["gpf"] = "@function.outer",
+        					["gpif"] = "@function.inner",
+        					["gpp"] = "@parameter.inner",
+        					["gpc"] = "@call.outer",
+        					["gpic"] = "@call.inner",
+      					},
+      					goto_previous_end = {
+        					["gpF"] = "@function.outer",
+        					["gpiF"] = "@function.inner",
+        					["gpP"] = "@parameter.inner",
+        					["gpC"] = "@call.outer",
+        					["gpiC"] = "@call.inner",
+      					},
     				},
   	  	  	  	},
 
@@ -106,6 +143,15 @@ packer.startup(function(use)
 				context_commentstring = {
     				enable = true
   	  	  	  	}
+			}
+
+			local parser_configs = require "nvim-treesitter.parsers".get_parser_configs()
+			parser_configs.markdown = {
+    			install_info = {
+        			url = "https://github.com/ikatyang/tree-sitter-markdown",
+        			files = {"src/parser.c", "src/scanner.cc"}
+    			},
+    			filetype = "markdown",
 			}
 		end
 	}
@@ -246,6 +292,9 @@ packer.startup(function(use)
 		config = function()
 			local tree_cb = require('nvim-tree.config').nvim_tree_callback
 
+			vim.g.nvim_tree_update_cwd = 1
+			vim.g.nvim_tree_quit_on_open = 1
+
 			vim.g.nvim_tree_bindings = {
 
 				["o"]              = tree_cb("edit"),
@@ -288,7 +337,7 @@ packer.startup(function(use)
 		end
 	}
 
-	use {
+	--[[ use {
 		"andweeb/presence.nvim",
 		config = function()
 			require('presence'):setup {
@@ -298,7 +347,7 @@ packer.startup(function(use)
 				neovim_image_text = "Emacs Sucks Balls, Respectfully",
 			}
 		end
-	}
+	} ]]
 
 	use {
 		"glepnir/prodoc.nvim",
@@ -406,7 +455,7 @@ packer.startup(function(use)
 			vim.api.nvim_set_keymap("n", "<Leader>/", "<Plug>kommentary_line_default", {})
 			vim.api.nvim_set_keymap("v", "<Leader>/", "<Plug>kommentary_visual_default", {})
 		end,
-		keys = { { "n", vim.api.nvim_replace_termcodes("<Leader>/", true, true, true) }, { "v", vim.api.nvim_replace_termcodes("<Leader>/", true, true, true) } }
+		event = "ColorScheme"
 	}
 
 	use {
@@ -426,6 +475,176 @@ packer.startup(function(use)
 
 	}
 
-	-- use { "winston0410/smart-cursor.nvim", module = "smart-cursor" }
+	use {
+		"jghauser/mkdir.nvim",
+		config = function()
+			require('mkdir')
+		end,
+		event = "BufWritePre"
+	}
+
+	use {
+		"mfussenegger/nvim-dap",
+		module = "dap"
+	}
+
+	use {
+		"rcarriga/nvim-dap-ui",
+		after = "nvim-dap"
+	}
+
+	use {
+		"Pocco81/DAPInstall.nvim",
+		config = function()
+			local dap = require('dap-install')
+
+			local debugger_list = require('dap-install.debuggers_list').debuggers
+
+			for debugger, _ in pairs(debugger_list) do
+				dap.config(debugger, {})
+			end
+		end,
+		cmd = { "DIInstall", "DIUninstall", "DIList" },
+		event = "ColorScheme",
+	}
+
+	use {
+  		"jghauser/follow-md-links.nvim",
+  		config = function()
+    		require('follow-md-links')
+  		end,
+  		event = "ColorScheme"
+	}
+
+	use {
+		"lukas-reineke/format.nvim",
+		config = function()
+			require('format').setup {
+				["*"] = {
+        			{ cmd = { "sed -i 's/[ \t]*$//'" } } -- Removes trailing whitespace
+    			},
+    			lua = {
+        			{
+            			cmd = { "lua-format" }
+        			}
+    			},
+    			go = {
+        			{
+            			cmd = { "gofmt -w", "goimports -w" },
+            			tempfile_postfix = ".tmp"
+        			}
+    			},
+    			javascript = {
+        			{ cmd = { "prettier -w", "./node_modules/.bin/eslint --fix" } }
+    			},
+    			markdown = {
+        			{ cmd = { "prettier -w" } },
+        			{
+            			cmd = { "black" },
+            			start_pattern = "^```python$",
+            			end_pattern = "^```$",
+            			target = "current"
+        			}
+    			}
+    		}
+		end,
+		cmd = { "Format", "FormatWrite" },
+	}
+
+	use {
+		"neovim/nvim-lspconfig",
+		event = "ColorScheme"
+	}
+
+	use {
+		"kabouzeid/nvim-lspinstall",
+		config = function()
+
+			local lspconfig, lspinstall = require('lspconfig'), require('lspinstall')
+
+			lspinstall.setup()
+
+			local configurations = {} -- require('lsp_config')
+
+			local setup_servers = function()
+				local installed_servers = lspinstall.installed_servers()
+
+				for _, server in ipairs(installed_servers) do
+  					lspconfig[server].setup(configurations[server] or {})
+				end
+			end
+
+			setup_servers()
+
+			-- Automatically reload after `:LspInstall <server>` so we don't have to restart neovim
+			lspinstall.post_install_hook = function()
+  				setup_servers()
+  				vim.cmd("bufdo e")
+			end
+
+		end,
+		requires = "nvim-lspconfig",
+		event = "ColorScheme"
+	}
+
+	use {
+		"hrsh7th/nvim-compe",
+		config = function()
+
+			require('compe').setup {
+	  			enabled = true,
+	  			autocomplete = true,
+	  			debug = false,
+	  			min_length = 1,
+	  			preselect = 'enable',
+	  			throttle_time = 80,
+	  			source_timeout = 200,
+	  			incomplete_delay = 400,
+	  			max_abbr_width = 100,
+	  			max_kind_width = 100,
+	  			max_menu_width = 120,
+	  			documentation = true,
+
+	  			source = {
+					path = true,
+					buffer = true,
+					calc = true,
+					nvim_lsp = true,
+					nvim_lua = true,
+					tags = true,
+					luasnip = true,
+					treesitter = true,
+	  			}
+			}
+		end,
+		after = "nvim-lspconfig",
+	}
+
+	use {
+		"L3MON4D3/LuaSnip",
+		after = "nvim-compe",
+	}
+
+	use {
+		"simrat39/symbols-outline.nvim",
+		setup = function()
+			vim.g.symbols_outline = {
+    			highlight_hovered_item = true,
+    			show_guides = true,
+    			auto_preview = true,
+    			position = "right",
+    			keymaps = {
+        			close = "q",
+        			goto_location = "o",
+        			focus_location = "<Tab>",
+        			hover_symbol = "K",
+        			rename_symbol = "r",
+        			code_actions = "a",
+    			},
+    			lsp_blacklist = {},
+			}
+		end,
+		cmd = { "SymbolsOutline", "SymbolsOutlineOpen", "SymbolsOutlineClose" }
+	}
 
 end)

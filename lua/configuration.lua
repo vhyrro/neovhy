@@ -18,7 +18,7 @@ vim.opt.number = true
 vim.opt.relativenumber = true
 
 -- Used by which-key.nvim
-vim.opt.timeoutlen = 300
+vim.opt.timeoutlen = 500
 
 -- Update the editor more frequently
 vim.opt.updatetime = 100
@@ -50,6 +50,9 @@ vim.opt.expandtab = false
 vim.opt.shiftwidth = 4
 vim.opt.tabstop = 4
 vim.opt.softtabstop = 4
+
+-- Set up completion options for nvim-compe
+vim.opt.completeopt = "menuone,noselect"
 
 -- Allow us to edit text that doesn't classify as characters
 -- in visual block mode
