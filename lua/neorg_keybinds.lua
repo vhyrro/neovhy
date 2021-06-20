@@ -9,11 +9,15 @@ local neorg_callbacks = require('neorg.callbacks')
 -- NEORG KEYBINDS
 
 -- Keys for managing TODO items and setting their states
-neorg_callbacks.on_event("core.keybinds.events.enable_keybinds", function(event, content)
-	if content.mode == "norg" then
-		content.map("n", "gtd", ":Neorg keybind norg core.norg.qol.todo_items.todo.task_done<CR>", { silent = true, noremap = true })
-		content.map("n", "gtu", ":Neorg keybind norg core.norg.qol.todo_items.todo.task_undone<CR>", { silent = true, noremap = true })
-		content.map("n", "gtp", ":Neorg keybind norg core.norg.qol.todo_items.todo.task_pending<CR>", { silent = true, noremap = true })
-		content.map("n", "gtt", ":Neorg keybind norg core.norg.qol.todo_items.todo.task_cycle<CR>", { silent = true, noremap = true })
-	end
+neorg_callbacks.on_event("core.keybinds.events.enable_keybinds", function(_, content)
+
+	content.map_event_to_mode("norg", {
+		n = {
+			{ "gtd", "core.norg.qol.todo_items.todo.task_done" },
+			{ "gtu", "core.norg.qol.todo_items.todo.task_undone" },
+			{ "gtp", "core.norg.qol.todo_items.todo.task_pending" },
+			{ "gtt", "core.norg.qol.todo_items.todo.task_cycle" }
+		},
+	}, { silent = true, noremap = true })
+
 end)

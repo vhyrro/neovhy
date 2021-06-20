@@ -14,6 +14,14 @@ packer.init({
 	git = {
 		clone_timeout = 350,
 	},
+	display = {
+		title = "Packer",
+		done_sym = "",
+		error_syn = "×",
+		keybindings = {
+			toggle_info = "o"
+		}
+	}
 })
 
 packer.startup(function(use)
@@ -29,7 +37,7 @@ packer.startup(function(use)
 
 	use {
 		"nvim-treesitter/nvim-treesitter",
-		run = "TSUpdate",
+		run = ":TSUpdate",
 		opt = true,
 		config = function()
 			require('nvim-treesitter.configs').setup {
@@ -71,11 +79,11 @@ packer.startup(function(use)
       	  	  	  	  	keymaps = {
         					["af"] = "@function.outer",
         					["if"] = "@function.inner",
+        					["il"] = "@loop.outer",
+        					["al"] = "@loop.outer",
         					["icd"] = "@conditional.inner",
         					["acd"] = "@conditional.outer",
         					["acm"] = "@comment.outer",
-        					["ilp"] = "@loop.inner",
-        					["alp"] = "@loop.outer",
         					["ast"] = "@statement.outer",
         					["isc"] = "@scopename.inner",
         					["iB"] = "@block.inner",
@@ -137,15 +145,21 @@ packer.startup(function(use)
   				},
 
 				tree_docs = {
-					enable = true
+					enable = false -- Currently experimental, doesn't work well
 				},
 
 				context_commentstring = {
     				enable = true
-  	  	  	  	}
+  	  	  	  	},
+
+				autotag = {
+					enable = true,
+					filetypes = { "html", "javascript", "javascriptreact", "typescriptreact", "svelte", "vue", "markdown" },
+				},
 			}
 
-			local parser_configs = require "nvim-treesitter.parsers".get_parser_configs()
+			local parser_configs = require('nvim-treesitter.parsers').get_parser_configs()
+
 			parser_configs.markdown = {
     			install_info = {
         			url = "https://github.com/ikatyang/tree-sitter-markdown",
@@ -172,8 +186,13 @@ packer.startup(function(use)
 		after = "nvim-treesitter",
 	}
 
-	use {
+	--[[ use {
 		"nvim-treesitter/nvim-tree-docs",
+		after = "nvim-treesitter"
+	} ]]
+
+	use {
+		"windwp/nvim-ts-autotag",
 		after = "nvim-treesitter"
 	}
 
@@ -223,7 +242,7 @@ packer.startup(function(use)
 
 	use {
 		"mizlan/iswap.nvim",
-		after = "nvim-treesitter",
+		cmd = "ISwap",
 		config = function()
 			require('iswap').setup {
 			  	-- The keys that will be used as a selection, in order
@@ -289,11 +308,12 @@ packer.startup(function(use)
 		"kyazdani42/nvim-tree.lua",
 		requires = "nvim-web-devicons",
 		cmd = { "NvimTreeClipboard", "NvimTreeClose", "NvimTreeFindFile", "NvimTreeOpen", "NvimTreeRefresh", "NvimTreeToggle" },
-		config = function()
-			local tree_cb = require('nvim-tree.config').nvim_tree_callback
-
+		setup = function()
 			vim.g.nvim_tree_update_cwd = 1
 			vim.g.nvim_tree_quit_on_open = 1
+		end,
+		config = function()
+			local tree_cb = require('nvim-tree.config').nvim_tree_callback
 
 			vim.g.nvim_tree_bindings = {
 
@@ -564,7 +584,7 @@ packer.startup(function(use)
 
 			lspinstall.setup()
 
-			local configurations = {} -- require('lsp_config')
+			local configurations = require('lsp_config')
 
 			local setup_servers = function()
 				local installed_servers = lspinstall.installed_servers()
@@ -585,6 +605,11 @@ packer.startup(function(use)
 		end,
 		requires = "nvim-lspconfig",
 		event = "ColorScheme"
+	}
+
+	use {
+		"folke/lua-dev.nvim",
+		module = "lua-dev"
 	}
 
 	use {

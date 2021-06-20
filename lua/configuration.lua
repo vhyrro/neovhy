@@ -81,5 +81,5 @@ end
 
 -- 	autocmd BufWritePost plugins.lua :lua require('neovhy').recompile()
 vim.cmd [[ 
-	autocmd BufRead * :lua require('neovhy').on_file_enter()
+	autocmd FileType * :lua require('neovhy').on_file_enter()
 ]]

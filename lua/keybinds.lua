@@ -9,6 +9,12 @@ vim.api.nvim_set_keymap('n', "C", "\"_C", { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', "s", "\"_s", { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', "S", "\"_S", { noremap = true, silent = true })
 
+-- Same as above but for visual mode
+vim.api.nvim_set_keymap('v', "c", "\"_c", { noremap = true, silent = true })
+vim.api.nvim_set_keymap('v', "C", "\"_C", { noremap = true, silent = true })
+vim.api.nvim_set_keymap('v', "s", "\"_s", { noremap = true, silent = true })
+vim.api.nvim_set_keymap('v', "S", "\"_S", { noremap = true, silent = true })
+
 -- Execute a block of code when it is selected
 vim.api.nvim_set_keymap('v', "<M-x>", ":source<CR>", { silent = true })
 -- Execute a paragraph of code (note: when treesitter textobjects become stable use them instead of `vip`)
@@ -53,6 +59,7 @@ vim.api.nvim_set_keymap('n', "<Leader>ff", ":Telescope find_files<CR>", { silent
 vim.api.nvim_set_keymap('n', "<Leader>fh", ":Telescope help_tags<CR>", { silent = true })
 vim.api.nvim_set_keymap('n', "<Leader>fb", ":Telescope buffers<CR>", { silent = true })
 vim.api.nvim_set_keymap('n', "<Leader>fo", ":Telescope oldfiles<CR>", { silent = true })
+vim.api.nvim_set_keymap('n', "<Leader>fs", ":Telescope lsp_workspace_symbols<CR>", { silent = true })
 
 -- Toggle nvim-tree
 vim.api.nvim_set_keymap('n', "<Leader>t", ":NvimTreeToggle<CR>", { noremap = true, silent = true })
