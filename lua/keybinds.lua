@@ -18,6 +18,11 @@ vim.api.nvim_set_keymap('v', "S", "\"_S", { noremap = true, silent = true })
 -- Create a binding for the opposite of join-line (J)
 vim.api.nvim_set_keymap('n', "<C-j>", "i<CR><Esc>J", { noremap = true })
 
+-- These bindings allow for compatibility with functions that bind some magic to <CR>
+-- and <BS> (like autopairs)
+vim.api.nvim_set_keymap('i', "<C-j>", "<CR>", {})
+vim.api.nvim_set_keymap('i', "<C-h>", "<BS>", {})
+
 -- Execute a block of code when it is selected
 vim.api.nvim_set_keymap('v', "<M-x>", ":source<CR>", { silent = true })
 -- Execute a paragraph of code (note: when treesitter textobjects become stable use them instead of `vip`)
