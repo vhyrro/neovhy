@@ -393,7 +393,7 @@ packer.startup(function(use)
 				start_in_insert = false,
 				persist_size = true,
 				direction = "float",
-				shell = vim.o.shell, -- change the default shell
+				shell = vim.o.shell,
 				-- This field is only relevant if direction is set to 'float'
 				float_opts = {
 					-- The border key is *almost* the same as 'nvim_win_open'
@@ -492,7 +492,6 @@ packer.startup(function(use)
 				extensions = { "nvim-tree" }
 			}
 		end
-
 	}
 
 	use {
@@ -639,7 +638,13 @@ packer.startup(function(use)
 					tags = true,
 					luasnip = true,
 					treesitter = true,
+					spell = false
 	  			}
+			}
+
+			require('nvim-autopairs.completion.compe').setup {
+  				map_cr = true,
+  				map_complete = true,
 			}
 		end,
 		after = "nvim-lspconfig",
@@ -670,6 +675,14 @@ packer.startup(function(use)
 			}
 		end,
 		cmd = { "SymbolsOutline", "SymbolsOutlineOpen", "SymbolsOutlineClose" }
+	}
+
+	use {
+		"ahmedkhalf/lsp-rooter.nvim",
+		config = function()
+			require('lsp-rooter').setup()
+		end,
+		event = "ColorScheme"
 	}
 
 end)

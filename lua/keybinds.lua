@@ -15,6 +15,9 @@ vim.api.nvim_set_keymap('v', "C", "\"_C", { noremap = true, silent = true })
 vim.api.nvim_set_keymap('v', "s", "\"_s", { noremap = true, silent = true })
 vim.api.nvim_set_keymap('v', "S", "\"_S", { noremap = true, silent = true })
 
+-- Create a binding for the opposite of join-line (J)
+vim.api.nvim_set_keymap('n', "<C-j>", "i<CR><Esc>J", { noremap = true })
+
 -- Execute a block of code when it is selected
 vim.api.nvim_set_keymap('v', "<M-x>", ":source<CR>", { silent = true })
 -- Execute a paragraph of code (note: when treesitter textobjects become stable use them instead of `vip`)
@@ -22,8 +25,6 @@ vim.api.nvim_set_keymap('n', "<M-x>", "vip:source<CR><Esc>", { silent = true })
 
 -- Keymaps for managing and navigating through splits
 vim.api.nvim_set_keymap('n', "<C-h>", "<C-w><C-h>", { noremap = true })
-vim.api.nvim_set_keymap('n', "<C-j>", "<C-w><C-j>", { noremap = true })
-vim.api.nvim_set_keymap('n', "<C-k>", "<C-w><C-k>", { noremap = true })
 vim.api.nvim_set_keymap('n', "<C-l>", "<C-w><C-l>", { noremap = true })
 
 vim.api.nvim_set_keymap('n', "<C-A-h>", ":vertical resize +2<CR>", { silent = true })
@@ -54,7 +55,7 @@ vim.api.nvim_set_keymap('n', "<C-A-p>", ":BufferLineMovePrev<CR>", { silent = tr
 -- Telescope keybindings
 vim.api.nvim_set_keymap('n', "<C-s>", ":Telescope current_buffer_fuzzy_find<CR>", { silent = true, noremap = true })
 vim.api.nvim_set_keymap('n', "<Leader>lg", ":Telescope live_grep<CR>", { silent = true })
-vim.api.nvim_set_keymap('n', "<Leader>mp", ":Telescope man_pages<CR>", { silent = true })
+vim.api.nvim_set_keymap('n', "<Leader>fm", ":Telescope man_pages<CR>", { silent = true })
 vim.api.nvim_set_keymap('n', "<Leader>ff", ":Telescope find_files<CR>", { silent = true })
 vim.api.nvim_set_keymap('n', "<Leader>fh", ":Telescope help_tags<CR>", { silent = true })
 vim.api.nvim_set_keymap('n', "<Leader>fb", ":Telescope buffers<CR>", { silent = true })
@@ -91,7 +92,6 @@ vim.api.nvim_set_keymap('n', "<Leader>cb", ":lua require('dap').toggle_breakpoin
 vim.api.nvim_set_keymap('n', "<Leader>rpl", ":lua require('dap').repl.toggle()<CR>", { silent = true })
 
 -- Keybindings for nvim-compe + LuaSnip
-vim.api.nvim_set_keymap('i', "<CR>", "compe#confirm('<CR>')", { silent = true, expr = true })
 vim.api.nvim_set_keymap('i', "<C-t>", "compe#confirm('<C-t>')", { silent = true, expr = true })
 
 vim.api.nvim_set_keymap('i', "<Tab>", "luasnip#expand_or_jumpable() ? \'<Plug>luasnip-expand-or-jump\' : \'<Tab>\'", { silent = true, expr = true })
@@ -105,3 +105,6 @@ vim.api.nvim_set_keymap('n', "<Leader>sp", ":ISwap<CR>", { silent = true })
 
 -- Keybindings for SymbolsOutline.nvim
 vim.api.nvim_set_keymap('n', "<Leader>so", ":SymbolsOutline<CR>", { silent = true })
+
+-- Keybindings for markdown-preview.nvim
+vim.api.nvim_set_keymap('n', "<Leader>mp", ":MarkdownPreviewToggle<CR>", { noremap = true, silent = true })

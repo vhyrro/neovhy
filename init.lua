@@ -14,7 +14,7 @@ vim.g.loaded_man = false
 vim.g.loaded_2html_plugin = false
 vim.g.loaded_remote_plugins = false
 
-vim.defer_fn(vim.schedule_wrap(function()
+vim.defer_fn(function()
 	require('configuration')
 	require('keybinds')
 	require('plugins')
@@ -35,4 +35,4 @@ vim.defer_fn(vim.schedule_wrap(function()
 			silent! bufdo e
 		]]
 	end, 15)
-end), 0)
+end, 0)
