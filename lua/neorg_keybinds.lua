@@ -16,7 +16,7 @@ neorg_callbacks.on_event("core.keybinds.events.enable_keybinds", function(_, con
 			{ "gtd", "core.norg.qol.todo_items.todo.task_done" },
 			{ "gtu", "core.norg.qol.todo_items.todo.task_undone" },
 			{ "gtp", "core.norg.qol.todo_items.todo.task_pending" },
-			{ "gtt", "core.norg.qol.todo_items.todo.task_cycle" }
+			{ "<C-Space>", "core.norg.qol.todo_items.todo.task_cycle" }
 		},
 	}, { silent = true, noremap = true })
 

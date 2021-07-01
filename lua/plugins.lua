@@ -31,6 +31,10 @@ packer.startup(function(use)
 	}
 
 	use {
+		"blueballs-theme/blueballs-neovim",
+	}
+
+	use {
 		"kyazdani42/nvim-web-devicons",
 		module = "nvim-web-devicons"
 	}
@@ -40,6 +44,25 @@ packer.startup(function(use)
 		run = ":TSUpdate",
 		opt = true,
 		config = function()
+
+			local parser_configs = require('nvim-treesitter.parsers').get_parser_configs()
+
+			parser_configs.markdown = {
+    			install_info = {
+        			url = "https://github.com/ikatyang/tree-sitter-markdown",
+        			files = {"src/parser.c", "src/scanner.cc"}
+    			},
+    			filetype = "markdown",
+			}
+
+			--[[ parser_configs.lua = {
+				install_info = {
+					url = "https://github.com/tjdevries/tree-sitter-lua",
+					files = { "src/parser.c", "src/scanner.cc" },
+				},
+				filetype = "lua"
+			} ]]
+
 			require('nvim-treesitter.configs').setup {
 				ensure_installed = "all",
 
@@ -76,6 +99,10 @@ packer.startup(function(use)
 				textobjects = {
     				select = {
       	  	  	  	  	enable = true,
+
+						-- Automatically jump forward to textobj, similar to targets.vim 
+      					lookahead = true,
+
       	  	  	  	  	keymaps = {
         					["af"] = "@function.outer",
         					["if"] = "@function.inner",
@@ -156,16 +183,6 @@ packer.startup(function(use)
 					enable = true,
 					filetypes = { "html", "javascript", "javascriptreact", "typescriptreact", "svelte", "vue", "markdown" },
 				},
-			}
-
-			local parser_configs = require('nvim-treesitter.parsers').get_parser_configs()
-
-			parser_configs.markdown = {
-    			install_info = {
-        			url = "https://github.com/ikatyang/tree-sitter-markdown",
-        			files = {"src/parser.c", "src/scanner.cc"}
-    			},
-    			filetype = "markdown",
 			}
 		end
 	}
@@ -279,15 +296,121 @@ packer.startup(function(use)
 		config = function()
 			require('neorg').setup {
 
+				-- Select the modules we want to load
 				load = {
-					["core.defaults"] = {},
-					["core.norg.concealer"] = {}
+					["core.defaults"] = {}, -- Load all the defaults
+					["core.norg.esupports"] = { -- Editing supports
+						indent = true, -- Enable indentation
+
+						-- CONFIGURE MY OWN CUSTOM INDENTATION
+						indent_config = {
+							todo_items = {
+								regex = "^(%s*)%-%s+%[%s*[x%*%s]%s*%]%s+.*$",
+								indent = function(matches)
+									return matches[1]:len()
+								end
+							},
+
+							headings = {
+								regex = "^(%s*%*+%s+)(.*)$",
+								indent = function(matches)
+									if matches[2]:len() > 0 then
+										return matches[1]:len()
+									else
+										return -1
+									end
+								end
+							},
+
+							quotes = {
+								regex = "^(%s*>%s+)(.*)$",
+								indent = function(matches)
+									if matches[2]:len() > 0 then
+										return matches[1]:len()
+									else
+										return -1
+									end
+								end
+							},
+
+							unordered_lists = {
+								regex = "^(%s*)%-%s+.+$",
+								indent = function(matches)
+									return matches[1]:len()
+								end
+							},
+
+						}
+					},
+					["core.norg.concealer"] = { -- Allows the use of icons
+						icons = { -- Set our own icons here
+							todo = {
+								enabled = true,
+
+								done = {
+									enabled = true,
+									icon = ""
+								},
+								pending = {
+									enabled = true,
+									icon = ""
+								},
+								undone = {
+									enabled = true,
+									icon = "×"
+								}
+							},
+							quote = {
+								enabled = true,
+								icon = "∣"
+							},
+							heading = {
+								enabled = true,
+
+								level_1 = {
+									enabled = true,
+									icon = "⦿"
+								},
+
+								level_2 = {
+									enabled = true,
+									icon = "⦾"
+								},
+
+								level_3 = {
+									enabled = true,
+									icon = "•"
+								},
+
+								level_4 = {
+									enabled = true,
+									icon = "◦"
+								},
+							},
+							list = {
+								enabled = false,
+								icon = "‑"
+							},
+						},
+
+						conceal_cursor = ""
+					},
+					["core.norg.dirman"] = { -- Manage Neorg directories
+						config = {
+							workspaces = {
+								my_ws = "~/neorg",
+								my_secret_workspace = "~/neorg/secret_notes"
+							}
+						}
+					}
 				},
 
+				-- Set custom logger settings
 				logger = {
 					level = "trace"
 				},
 
+				-- Enable Neorg's default keybinds here
 				hook = function()
 					require('neorg_keybinds')
 				end,
@@ -317,31 +440,34 @@ packer.startup(function(use)
 
 			vim.g.nvim_tree_bindings = {
 
-				["o"]              = tree_cb("edit"),
-				["<2-LeftMouse>"]  = tree_cb("edit"),
-				["<2-RightMouse>"] = tree_cb("cd"),
-				[","]              = tree_cb("cd"),
-				["<C-v>"]          = tree_cb("vsplit"),
-				["<C-x>"]          = tree_cb("split"),
-				["<C-t>"]          = tree_cb("tabnew"),
-				["K"]              = tree_cb("prev_sibling"),
-				["J"]              = tree_cb("next_sibling"),
-				["O"]              = tree_cb("close_node"),
-				["<Tab>"]          = tree_cb("preview"),
-				["I"]              = tree_cb("toggle_ignored"),
-				["H"]              = tree_cb("toggle_dotfiles"),
-				["R"]              = tree_cb("refresh"),
-				["a"]              = tree_cb("create"),
-				["d"]              = tree_cb("remove"),
-				["r"]              = tree_cb("rename"),
-				["<C-r>"]          = tree_cb("full_rename"),
-				["x"]              = tree_cb("cut"),
-				["c"]              = tree_cb("copy"),
-				["p"]              = tree_cb("paste"),
-				["[c"]             = tree_cb("prev_git_item"),
-				["]c"]             = tree_cb("next_git_item"),
-				["<"]              = tree_cb("dir_up"),
-				["q"]              = tree_cb("close"),
+				{ key = "o", cb = tree_cb("edit") },
+				{ key = "<2-LeftMouse>",  cb = tree_cb("edit") },
+				{ key = "<2-RightMouse>", cb = tree_cb("cd") },
+				{ key = ",",              cb = tree_cb("cd") },
+				{ key = "<C-v>",          cb = tree_cb("vsplit") },
+				{ key = "<C-x>",          cb = tree_cb("split") },
+				{ key = "<C-t>",          cb = tree_cb("tabnew") },
+				{ key = "K",              cb = tree_cb("prev_sibling") },
+				{ key = "J",              cb = tree_cb("next_sibling") },
+				{ key = "O",              cb = tree_cb("close_node") },
+				{ key = "<Tab>",          cb = tree_cb("preview") },
+				{ key = "I",              cb = tree_cb("toggle_ignored") },
+				{ key = "H",              cb = tree_cb("toggle_dotfiles") },
+				{ key = "R",              cb = tree_cb("refresh") },
+				{ key = "a",              cb = tree_cb("create") },
+				{ key = "d",              cb = tree_cb("remove") },
+				{ key = "r",              cb = tree_cb("rename") },
+				{ key = "<C-r>",          cb = tree_cb("full_rename") },
+				{ key = "x",              cb = tree_cb("cut") },
+				{ key = "y",              cb = tree_cb("copy_name") },
+      			{ key = "Y",              cb = tree_cb("copy_path") },
+      			{ key = "gy",             cb = tree_cb("copy_absolute_path") },
+				{ key = "p",              cb = tree_cb("paste") },
+				{ key = "[c",             cb = tree_cb("prev_git_item") },
+				{ key = "]c",             cb = tree_cb("next_git_item") },
+				{ key = "<",              cb = tree_cb("dir_up") },
+				{ key = "q",              cb = tree_cb("close") },
+				{ key = "g?",             cb = tree_cb("toggle_help") },
 
 			}
 
@@ -523,8 +649,8 @@ packer.startup(function(use)
 				dap.config(debugger, {})
 			end
 		end,
-		cmd = { "DIInstall", "DIUninstall", "DIList" },
-		event = "ColorScheme",
+
+		cmd = { "DIInstall", "DIUninstall", "DIList" }
 	}
 
 	use {
