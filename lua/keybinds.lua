@@ -59,7 +59,7 @@ vim.api.nvim_set_keymap('n', "<C-A-p>", ":BufferLineMovePrev<CR>", { silent = tr
 
 -- Telescope keybindings
 vim.api.nvim_set_keymap('n', "<C-s>", ":Telescope current_buffer_fuzzy_find<CR>", { silent = true, noremap = true })
-vim.api.nvim_set_keymap('n', "<Leader>lg", ":Telescope live_grep<CR>", { silent = true })
+vim.api.nvim_set_keymap('n', "<Leader>lg", ":Telescope grep_string<CR>", { silent = true })
 vim.api.nvim_set_keymap('n', "<Leader>fm", ":Telescope man_pages<CR>", { silent = true })
 vim.api.nvim_set_keymap('n', "<Leader>ff", ":Telescope find_files<CR>", { silent = true })
 vim.api.nvim_set_keymap('n', "<Leader>fh", ":Telescope help_tags<CR>", { silent = true })

@@ -8,9 +8,9 @@ local neorg_callbacks = require('neorg.callbacks')
 
 -- NEORG KEYBINDS
 
--- Keys for managing TODO items and setting their states
 neorg_callbacks.on_event("core.keybinds.events.enable_keybinds", function(_, content)
 
+	-- Keys for managing TODO items and setting their states
 	content.map_event_to_mode("norg", {
 		n = {
 			{ "gtd", "core.norg.qol.todo_items.todo.task_done" },
