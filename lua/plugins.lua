@@ -465,6 +465,14 @@ packer.startup(function(use)
 	}
 
 	use {
+		"jvgrootveld/telescope-zoxide",
+		after = "telescope.nvim",
+		config = function()
+			require('telescope').load_extension("zoxide")
+		end
+	}
+
+	use {
 		"akinsho/nvim-toggleterm.lua",
 		module = "toggleterm.terminal",
 		config = function()
