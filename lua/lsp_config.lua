@@ -7,6 +7,13 @@ local sumneko_root_path = vim.fn.stdpath("data") .. "/lspinstall/lua/sumneko-lua
 local sumneko_binary = vim.fn.stdpath("data") .. "/lspinstall/lua/sumneko-lua-language-server"
 
 lsp_configs["lua"] = require('lua-dev').setup {
+
+	library = {
+		vimruntime = true,
+    	types = true,
+    	plugins = false,
+    },
+
 	lspconfig = {
   		cmd = { sumneko_binary, "-E", sumneko_root_path .. "/main.lua" },
   		settings = {

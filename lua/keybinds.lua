@@ -15,6 +15,9 @@ vim.api.nvim_set_keymap('v', "C", "\"_C", { noremap = true, silent = true })
 vim.api.nvim_set_keymap('v', "s", "\"_s", { noremap = true, silent = true })
 vim.api.nvim_set_keymap('v', "S", "\"_S", { noremap = true, silent = true })
 
+-- Set some Terminal keybinds
+vim.api.nvim_set_keymap('t', "<C-n>", "<C-\\><C-n>", { noremap = true, silent = true })
+
 -- Create a binding for the opposite of join-line (J)
 vim.api.nvim_set_keymap('n', "<C-j>", "i<CR><Esc>J", { noremap = true })
 
@@ -59,7 +62,7 @@ vim.api.nvim_set_keymap('n', "<C-A-p>", ":BufferLineMovePrev<CR>", { silent = tr
 
 -- Telescope keybindings
 vim.api.nvim_set_keymap('n', "<C-s>", ":Telescope current_buffer_fuzzy_find<CR>", { silent = true, noremap = true })
-vim.api.nvim_set_keymap('n', "<Leader>lg", ":Telescope grep_string<CR>", { silent = true })
+vim.api.nvim_set_keymap('n', "<Leader>lg", ":Telescope live_grep<CR>", { silent = true })
 vim.api.nvim_set_keymap('n', "<Leader>fm", ":Telescope man_pages<CR>", { silent = true })
 vim.api.nvim_set_keymap('n', "<Leader>ff", ":Telescope find_files<CR>", { silent = true })
 vim.api.nvim_set_keymap('n', "<Leader>fh", ":Telescope help_tags<CR>", { silent = true })
@@ -113,3 +116,7 @@ vim.api.nvim_set_keymap('n', "<Leader>so", ":SymbolsOutline<CR>", { silent = tru
 
 -- Keybindings for markdown-preview.nvim
 vim.api.nvim_set_keymap('n', "<Leader>mp", ":MarkdownPreviewToggle<CR>", { noremap = true, silent = true })
+
+-- Keybinds for persistence.nvim
+vim.api.nvim_set_keymap('n', "<Leader>ss", "<cmd>lua require('persistence').setup()<CR>", { silent = true })
+vim.api.nvim_set_keymap('n', "<Leader>rs", "<cmd>lua require('persistence').setup(); require('persistence').load({last = true})<CR>", { silent = true })

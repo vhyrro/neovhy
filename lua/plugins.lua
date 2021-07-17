@@ -1,11 +1,5 @@
 -- Bootstrap packer.nvim
 
-local install_path = vim.fn.stdpath("data") .. "/site/pack/packer/opt/packer.nvim"
-
-if vim.fn.empty(vim.fn.glob(install_path)) > 0 then
-  	vim.cmd("!git clone https://github.com/wbthomason/packer.nvim " .. install_path)
-end
-
 vim.cmd("packadd packer.nvim")
 
 local packer = require('packer')
@@ -25,6 +19,8 @@ packer.init({
 })
 
 packer.startup(function(use)
+	-- vim.cmd [[ autocmd BufWritePost plugins.lua source | PackerCompile ]]
+
 	use {
 		"wbthomason/packer.nvim",
 		opt = true
@@ -51,6 +47,14 @@ packer.startup(function(use)
     			filetype = "markdown",
 			}
 
+			parser_configs.norg = {
+				install_info = {
+					url = "/home/vhyrro/dev/tree-sitter-norg",
+					files = { "src/parser.c" },
+					branch = "main"
+				},
+			}
+
 			--[[ parser_configs.lua = {
 				install_info = {
 					url = "https://github.com/tjdevries/tree-sitter-lua",
@@ -60,7 +64,7 @@ packer.startup(function(use)
 			} ]]
 
 			require('nvim-treesitter.configs').setup {
-				ensure_installed = "all",
+				ensure_installed = { "lua", "norg", "haskell", "cpp", "c", "javascript", "markdown" },
 
 				highlight = {
 					enable = true
@@ -81,6 +85,12 @@ packer.startup(function(use)
 					enable = true
 				},
 
+				query_linter = {
+    				enable = true,
+    				use_virtual_text = true,
+    				lint_events = { "BufWrite", "CursorHold" },
+  				},
+
  	 	 	 	textsubjects = {
         			enable = true,
         			keymaps = {
@@ -96,7 +106,7 @@ packer.startup(function(use)
     				select = {
       	  	  	  	  	enable = true,
 
-						-- Automatically jump forward to textobj, similar to targets.vim 
+						-- Automatically jump forward to textobj, similar to targets.vim
       					lookahead = true,
 
       	  	  	  	  	keymaps = {
@@ -211,7 +221,7 @@ packer.startup(function(use)
 
 	use {
 		"nvim-treesitter/playground",
-		cmd = "TSPlaygroundToggle"
+		after = "nvim-treesitter",
 	}
 
 	use {
@@ -286,6 +296,14 @@ packer.startup(function(use)
 		cmd = "Neogit"
 	}
 
+	--[[ use {
+		"/home/vhyrro/dev/boot.nvim",
+		event = "ColorScheme",
+		config = function()
+			require('boot').setup()
+		end
+	} ]]
+
 	use {
 		"/home/vhyrro/dev/neorg",
 		after = "gruvbox-material",
@@ -295,62 +313,7 @@ packer.startup(function(use)
 				-- Select the modules we want to load
 				load = {
 					["core.defaults"] = {}, -- Load all the defaults
-					["core.norg.esupports"] = {},
-					["core.norg.concealer"] = { -- Allows the use of icons
-						config = {
-							icons = { -- Set our own icons here
-								todo = {
-									enabled = true,
-
-									done = {
-										enabled = true,
-										icon = ""
-									},
-									pending = {
-										enabled = true,
-										icon = ""
-									},
-									undone = {
-										enabled = true,
-										icon = "×"
-									}
-								},
-								quote = {
-									enabled = true,
-									icon = "∣"
-								},
-								heading = {
-									enabled = true,
-
-									level_1 = {
-										enabled = true,
-										icon = "⦿"
-									},
-
-									level_2 = {
-										enabled = true,
-										icon = "⦾"
-									},
-
-									level_3 = {
-										enabled = true,
-										icon = "•"
-									},
-
-									level_4 = {
-										enabled = true,
-										icon = "◦"
-									},
-								},
-								list = {
-									enabled = true,
-									icon = "‑"
-								},
-							},
-
-							conceal_cursor = ""
-						}
-					},
+					["core.norg.concealer"] = {}, -- Allows the use of icons
 					["core.keybinds"] = {
 						config = {
 							default_keybinds = true
@@ -365,13 +328,13 @@ packer.startup(function(use)
 
 							autochdir = false,
 						}
-					}
+					},
 				},
 
 				-- Set custom logger settings
-				--[[ logger = {
+				logger = {
 					level = "trace"
-				}, ]]
+				},
 
 			}
 		end
@@ -680,7 +643,32 @@ packer.startup(function(use)
 				local installed_servers = lspinstall.installed_servers()
 
 				for _, server in ipairs(installed_servers) do
-  					lspconfig[server].setup(configurations[server] or {})
+  					lspconfig[server].setup(vim.tbl_extend("force", configurations[server] or {}, {
+  						on_attach = function(_, bufnr)
+							local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
+
+  							local opts = { noremap = true, silent = true }
+
+  							buf_set_keymap("n", "gD", "<cmd>lua vim.lsp.buf.declaration()<CR>", opts)
+  							buf_set_keymap("n", "gd", "<cmd>lua vim.lsp.buf.definition()<CR>", opts)
+  							buf_set_keymap("n", "K", "<cmd>lua vim.lsp.buf.hover()<CR>", opts)
+  							buf_set_keymap("n", "gi", "<cmd>lua vim.lsp.buf.implementation()<CR>", opts)
+  							buf_set_keymap("n", "<C-k>", "<cmd>lua vim.lsp.buf.signature_help()<CR>", opts)
+  							buf_set_keymap("n", "<Leader>da", "<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>", opts)
+  							buf_set_keymap("n", "<Leader>dr", "<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>", opts)
+  							buf_set_keymap("n", "<Leader>rn", "<cmd>lua vim.lsp.buf.rename()<CR>", opts)
+  							buf_set_keymap("n", "<Leader>rf", "<cmd>lua vim.lsp.buf.references()<CR>", opts)
+  							buf_set_keymap("n", "<Leader>ca", "<cmd>lua vim.lsp.buf.code_action()<CR>", opts)
+  							buf_set_keymap("n", "<Leader>e", "<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>", opts)
+
+							vim.lsp.handlers["textDocument/hover"] =  vim.lsp.with(vim.lsp.handlers.hover, { border = "rounded" })
+  							vim.lsp.handlers["textDocument/signatureHelp"] =  vim.lsp.with(vim.lsp.handlers.hover, { border = "rounded" })
+
+  							require('lsp_signature').on_attach({
+								hint_prefix = " ",
+  							})
+  						end
+  					}))
 				end
 			end
 
@@ -700,6 +688,11 @@ packer.startup(function(use)
 	use {
 		"folke/lua-dev.nvim",
 		module = "lua-dev"
+	}
+
+	use {
+		"ray-x/lsp_signature.nvim",
+		module = "lsp_signature"
 	}
 
 	use {
@@ -729,7 +722,8 @@ packer.startup(function(use)
 					tags = true,
 					luasnip = true,
 					treesitter = true,
-					spell = false
+					spell = false,
+					neorg = true,
 	  			}
 			}
 
@@ -774,6 +768,11 @@ packer.startup(function(use)
 			require('lsp-rooter').setup()
 		end,
 		event = "ColorScheme"
+	}
+
+	use {
+		"folke/persistence.nvim",
+		module = "persistence"
 	}
 
 end)
