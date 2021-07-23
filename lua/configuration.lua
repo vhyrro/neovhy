@@ -61,6 +61,9 @@ vim.opt.virtualedit = "block"
 -- Set up the undofile directory
 vim.opt.undodir = "/home/vhyrro/.cache/nvim/undo"
 
+-- Show previews for substitutions etc.
+vim.opt.inccommand = "split"
+
 function neovhy:on_file_enter()
 
 	-- Enable undo files for every buffer

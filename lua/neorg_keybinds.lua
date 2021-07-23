@@ -8,7 +8,7 @@ local neorg_callbacks = require('neorg.callbacks')
 
 -- NEORG KEYBINDS
 
-neorg_callbacks.on_event("core.keybinds.events.enable_keybinds", function(_, content)
+--[[ neorg_callbacks.on_event("core.keybinds.events.enable_keybinds", function(_, content)
 
 	-- Keys for managing TODO items and setting their states
 	content.map_event_to_mode("norg", {
@@ -20,4 +20,4 @@ neorg_callbacks.on_event("core.keybinds.events.enable_keybinds", function(_, con
 		},
 	}, { silent = true, noremap = true })
 
-end)
+end) ]]

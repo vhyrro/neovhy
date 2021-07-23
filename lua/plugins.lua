@@ -40,7 +40,7 @@ packer.startup(function(use)
 			local parser_configs = require('nvim-treesitter.parsers').get_parser_configs()
 
 			parser_configs.markdown = {
-    			install_info = {
+				install_info = {
         			url = "https://github.com/ikatyang/tree-sitter-markdown",
         			files = {"src/parser.c", "src/scanner.cc"}
     			},
@@ -64,7 +64,7 @@ packer.startup(function(use)
 			} ]]
 
 			require('nvim-treesitter.configs').setup {
-				ensure_installed = { "lua", "norg", "haskell", "cpp", "c", "javascript", "markdown" },
+				ensure_installed = "all",
 
 				highlight = {
 					enable = true
@@ -221,7 +221,7 @@ packer.startup(function(use)
 
 	use {
 		"nvim-treesitter/playground",
-		after = "nvim-treesitter",
+		cmd = "TSPlaygroundToggle"
 	}
 
 	use {
@@ -322,29 +322,38 @@ packer.startup(function(use)
 					["core.norg.dirman"] = { -- Manage Neorg directories
 						config = {
 							workspaces = {
-								my_ws = "~/neorg",
-								my_secret_workspace = "~/neorg/secret_notes"
+								main = "~/neorg",
+								work = "~/neorg/work"
 							},
 
 							autochdir = false,
+							autodetect = false
 						}
 					},
+					["core.norg.tangle"] = {},
+					["core.integrations.telescope"] = {},
 				},
 
 				-- Set custom logger settings
 				logger = {
-					level = "trace"
+					level = "info"
 				},
 
 			}
-		end
+		end,
+		requires = { "/home/vhyrro/dev/neorg-telescope" }
 	}
 
 	use {
 		"karb94/neoscroll.nvim",
 		event = "CursorMoved",
 		config = function()
-			require('neoscroll').setup()
+			require('neoscroll').setup {
+				mappings = {
+					"<C-u>", "<C-d>", "<C-b>", "<C-f>",
+                	"<C-y>", "<C-e>", "zt", "zz", "zb"--, "gg", "G"
+                }
+			}
 		end
 	}
 
@@ -353,7 +362,7 @@ packer.startup(function(use)
 		requires = "nvim-web-devicons",
 		cmd = { "NvimTreeClipboard", "NvimTreeClose", "NvimTreeFindFile", "NvimTreeOpen", "NvimTreeRefresh", "NvimTreeToggle" },
 		setup = function()
-			vim.g.nvim_tree_update_cwd = 1
+			-- vim.g.nvim_tree_update_cwd = 1
 			vim.g.nvim_tree_quit_on_open = 1
 		end,
 		config = function()
@@ -473,7 +482,7 @@ packer.startup(function(use)
 
 	use {
 		"akinsho/nvim-bufferline.lua",
-		event = "ColorScheme",
+		after = "gruvbox-material",
 		config = function()
 			require('bufferline').setup {
 				options = {
@@ -512,7 +521,7 @@ packer.startup(function(use)
 						}
 					},
 					buffer_selected = {
-						gui = ""
+						gui = "none"
 					}
 				},
 
@@ -537,7 +546,7 @@ packer.startup(function(use)
 		event = "ColorScheme"
 	}
 
-	use {
+	--[[ use {
 		"hoob3rt/lualine.nvim",
 		requires = "kyazdani42/nvim-web-devicons",
 		event = "ColorScheme",
@@ -546,7 +555,7 @@ packer.startup(function(use)
 				extensions = { "nvim-tree" }
 			}
 		end
-	}
+	} ]]
 
 	use {
 		"jghauser/mkdir.nvim",
@@ -567,9 +576,16 @@ packer.startup(function(use)
 	}
 
 	use {
+		"jbyuki/one-small-step-for-vimkind",
+		module = "osv"
+	}
+
+	use {
 		"Pocco81/DAPInstall.nvim",
 		config = function()
 			local dap = require('dap-install')
+
+			dap.setup()
 
 			local debugger_list = require('dap-install.debuggers_list').debuggers
 
