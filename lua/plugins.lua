@@ -49,7 +49,7 @@ packer.startup(function(use)
 
 			parser_configs.norg = {
 				install_info = {
-					url = "/home/vhyrro/dev/tree-sitter-norg",
+					url = "https://github.com/vhyrro/tree-sitter-norg",
 					files = { "src/parser.c" },
 					branch = "main"
 				},
@@ -305,7 +305,7 @@ packer.startup(function(use)
 	} ]]
 
 	use {
-		"/home/vhyrro/dev/neorg",
+		"/home/vhyrro/dev/neorg-gtd",
 		after = "gruvbox-material",
 		config = function()
 			require('neorg').setup {
@@ -323,7 +323,8 @@ packer.startup(function(use)
 						config = {
 							workspaces = {
 								main = "~/neorg",
-								work = "~/neorg/work"
+								work = "~/neorg/work",
+								gtd = "~/neorg/gtd"
 							},
 
 							autochdir = false,
@@ -332,6 +333,16 @@ packer.startup(function(use)
 					},
 					["core.norg.tangle"] = {},
 					["core.integrations.telescope"] = {},
+					["core.norg.esupports"] = {
+						config = {
+							generate_meta_tags = false,
+						}
+					},
+					["core.gtd.base"] = {
+						config = {
+							workspace = "gtd",
+						}
+					}
 				},
 
 				-- Set custom logger settings
@@ -779,9 +790,9 @@ packer.startup(function(use)
 	}
 
 	use {
-		"ahmedkhalf/lsp-rooter.nvim",
+		"ahmedkhalf/project.nvim",
 		config = function()
-			require('lsp-rooter').setup()
+			require('project_nvim').setup()
 		end,
 		event = "ColorScheme"
 	}
@@ -789,6 +800,19 @@ packer.startup(function(use)
 	use {
 		"folke/persistence.nvim",
 		module = "persistence"
+	}
+
+	use {
+		"nanotee/luv-vimdocs",
+		event = "CmdlineEnter",
+	}
+
+	use {
+		"/home/vhyrro/dev/neogen",
+		event = "ColorScheme",
+		config = function()
+			require('neogen').setup()
+		end,
 	}
 
 end)

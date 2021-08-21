@@ -69,6 +69,7 @@ vim.api.nvim_set_keymap('n', "<Leader>fh", ":Telescope help_tags<CR>", { silent 
 vim.api.nvim_set_keymap('n', "<Leader>fb", ":Telescope buffers<CR>", { silent = true })
 vim.api.nvim_set_keymap('n', "<Leader>fo", ":Telescope oldfiles<CR>", { silent = true })
 vim.api.nvim_set_keymap('n', "<Leader>fs", ":Telescope lsp_workspace_symbols<CR>", { silent = true })
+vim.api.nvim_set_keymap('n', "<Leader>cd", ":Telescope zoxide list<CR>", { silent = true })
 
 -- Toggle nvim-tree
 vim.api.nvim_set_keymap('n', "<Leader>t", ":NvimTreeToggle<CR>", { noremap = true, silent = true })
