@@ -49,9 +49,11 @@ packer.startup(function(use)
 
 			parser_configs.norg = {
 				install_info = {
+					-- url = "/home/vhyrro/dev/tree-sitter-norg",
 					url = "https://github.com/vhyrro/tree-sitter-norg",
+					-- files = { "src/parser.c", "src/scanner.cc" },
 					files = { "src/parser.c" },
-					branch = "main"
+					branch = "main",
 				},
 			}
 
@@ -233,10 +235,20 @@ packer.startup(function(use)
 	}
 
 	use {
+		"NTBBloodbath/doom-one.nvim",
+		module = "doom-one",
+	}
+
+	use {
 		"windwp/nvim-autopairs",
 		event = "ColorScheme",
 		config = function()
 			require('nvim-autopairs').setup { check_ts = true }
+
+			require('nvim-autopairs.completion.cmp').setup({
+  				map_cr = true,
+  				map_complete = true,
+			})
 		end
 	}
 
@@ -305,7 +317,8 @@ packer.startup(function(use)
 	} ]]
 
 	use {
-		"/home/vhyrro/dev/neorg-gtd",
+		"JoeyGrajciar/neorg",
+		branch = "nvim_cmp_integration",
 		after = "gruvbox-material",
 		config = function()
 			require('neorg').setup {
@@ -331,18 +344,17 @@ packer.startup(function(use)
 							autodetect = false
 						}
 					},
-					["core.norg.tangle"] = {},
 					["core.integrations.telescope"] = {},
-					["core.norg.esupports"] = {
+					["core.norg.completion"] = {
 						config = {
-							generate_meta_tags = false,
+							engine = "nvim-cmp",
 						}
 					},
-					["core.gtd.base"] = {
+					--[[ ["core.gtd.base"] = {
 						config = {
 							workspace = "gtd",
 						}
-					}
+					} ]]
 				},
 
 				-- Set custom logger settings
@@ -653,7 +665,8 @@ packer.startup(function(use)
 
 	use {
 		"neovim/nvim-lspconfig",
-		event = "ColorScheme"
+		-- TODO: Revert when cmp fixes its shit
+		-- event = "ColorScheme"
 	}
 
 	use {
@@ -723,48 +736,78 @@ packer.startup(function(use)
 	}
 
 	use {
-		"hrsh7th/nvim-compe",
+		"hrsh7th/nvim-cmp",
 		config = function()
+			local cmp = require('cmp')
 
-			require('compe').setup {
-	  			enabled = true,
-	  			autocomplete = true,
-	  			debug = false,
-	  			min_length = 1,
-	  			preselect = 'enable',
-	  			throttle_time = 80,
-	  			source_timeout = 200,
-	  			incomplete_delay = 400,
-	  			max_abbr_width = 100,
-	  			max_kind_width = 100,
-	  			max_menu_width = 120,
-	  			documentation = true,
+			cmp.setup {
+    			snippet = {
+      				expand = function(args)
+						require('luasnip').lsp_expand(args.body)
+      				end
+    			},
 
-	  			source = {
-					path = true,
-					buffer = true,
-					calc = true,
-					nvim_lsp = true,
-					nvim_lua = true,
-					tags = true,
-					luasnip = true,
-					treesitter = true,
-					spell = false,
-					neorg = true,
-	  			}
-			}
+    			mapping = {
+      				["<C-p>"] = cmp.mapping.select_prev_item(),
+      				["<C-n>"] = cmp.mapping.select_next_item(),
+      				["<C-d>"] = cmp.mapping.scroll_docs(-4),
+      				["<C-u>"] = cmp.mapping.scroll_docs(4),
+      				["<C-Space>"] = cmp.mapping.complete(),
+      				["<C-c>"] = cmp.mapping.close(),
+      				["<CR>"] = cmp.mapping.confirm({
+        				behavior = cmp.ConfirmBehavior.Replace,
+        				select = true,
+      				})
+    			},
 
-			require('nvim-autopairs.completion.compe').setup {
-  				map_cr = true,
-  				map_complete = true,
-			}
+    			sources = {
+      				{ name = "buffer" },
+      				{ name = "nvim_lua" },
+					{ name = "nvim_lsp" },
+					{ name = "luasnip" },
+					{ name = "calc" },
+					{ name = "path" },
+					{ name = "norg" },
+    			},
+  			}
 		end,
-		after = "nvim-lspconfig",
+
+		requires = {
+			{
+				"hrsh7th/cmp-buffer",
+				after = "nvim-cmp",
+			},
+			{
+				"hrsh7th/cmp-nvim-lua",
+
+				after = "nvim-cmp",
+			},
+			{
+				"hrsh7th/cmp-nvim-lsp",
+
+				after = "nvim-cmp",
+			},
+			{
+				"saadparwaiz1/cmp_luasnip",
+
+				after = "nvim-cmp",
+			},
+			{
+				"hrsh7th/cmp-calc",
+
+				after = "nvim-cmp",
+			},
+			{
+				"hrsh7th/cmp-path",
+
+				after = "nvim-cmp",
+			},
+		},
 	}
 
 	use {
 		"L3MON4D3/LuaSnip",
-		after = "nvim-compe",
+		module = "cmp",
 	}
 
 	use {
@@ -811,7 +854,7 @@ packer.startup(function(use)
 		"/home/vhyrro/dev/neogen",
 		event = "ColorScheme",
 		config = function()
-			require('neogen').setup()
+			require('neogen').setup({ enabled = true })
 		end,
 	}
 

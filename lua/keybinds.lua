@@ -100,15 +100,6 @@ vim.api.nvim_set_keymap('n', "<Leader>b", ":lua require('dap').toggle_breakpoint
 vim.api.nvim_set_keymap('n', "<Leader>cb", ":lua require('dap').toggle_breakpoint(vim.fn.input(\"Condition: \"))<CR>", { silent = true })
 vim.api.nvim_set_keymap('n', "<Leader>rpl", ":lua require('dap').repl.toggle()<CR>", { silent = true })
 
--- Keybindings for nvim-compe + LuaSnip
-vim.api.nvim_set_keymap('i', "<C-t>", "compe#confirm('<C-t>')", { silent = true, expr = true })
-
-vim.api.nvim_set_keymap('i', "<Tab>", "luasnip#expand_or_jumpable() ? \'<Plug>luasnip-expand-or-jump\' : \'<Tab>\'", { silent = true, expr = true })
-vim.api.nvim_set_keymap('i', "<S-Tab>", "<cmd>lua require('luasnip').jump(-1)<CR>", { silent = true })
-
-vim.api.nvim_set_keymap('s', "<Tab>", "<cmd>lua require('luasnip').jump(1)<CR>", { silent = true })
-vim.api.nvim_set_keymap('s', "<S-Tab>", "<cmd>lua require('luasnip').jump(-1)<CR>", { silent = true })
-
 -- Keybindings for ISwap.nvim
 vim.api.nvim_set_keymap('n', "<Leader>sp", ":ISwap<CR>", { silent = true })
 
