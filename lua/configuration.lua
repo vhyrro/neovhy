@@ -51,9 +51,6 @@ vim.opt.shiftwidth = 4
 vim.opt.tabstop = 4
 vim.opt.softtabstop = 4
 
--- Set up completion options for nvim-compe
--- vim.opt.completeopt = "menuone,noselect"
-
 -- Allow us to edit text that doesn't classify as characters
 -- in visual block mode
 vim.opt.virtualedit = "block"

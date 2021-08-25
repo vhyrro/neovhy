@@ -49,10 +49,10 @@ packer.startup(function(use)
 
 			parser_configs.norg = {
 				install_info = {
-					-- url = "/home/vhyrro/dev/tree-sitter-norg",
-					url = "https://github.com/vhyrro/tree-sitter-norg",
-					-- files = { "src/parser.c", "src/scanner.cc" },
-					files = { "src/parser.c" },
+					url = "/home/vhyrro/dev/tree-sitter-norg",
+					-- url = "https://github.com/vhyrro/tree-sitter-norg",
+					files = { "src/parser.c", "src/scanner.cc" },
+					-- files = { "src/parser.c" },
 					branch = "main",
 				},
 			}
@@ -317,8 +317,7 @@ packer.startup(function(use)
 	} ]]
 
 	use {
-		"JoeyGrajciar/neorg",
-		branch = "nvim_cmp_integration",
+		"/home/vhyrro/dev/neorg",
 		after = "gruvbox-material",
 		config = function()
 			require('neorg').setup {
@@ -347,7 +346,8 @@ packer.startup(function(use)
 					["core.integrations.telescope"] = {},
 					["core.norg.completion"] = {
 						config = {
-							engine = "nvim-cmp",
+							-- engine = "nvim-cmp",
+							engine = nil,
 						}
 					},
 					--[[ ["core.gtd.base"] = {
@@ -741,6 +741,10 @@ packer.startup(function(use)
 			local cmp = require('cmp')
 
 			cmp.setup {
+				completion = {
+    				completeopt = "menuone,noselect",
+  				},
+
     			snippet = {
       				expand = function(args)
 						require('luasnip').lsp_expand(args.body)
@@ -756,7 +760,7 @@ packer.startup(function(use)
       				["<C-c>"] = cmp.mapping.close(),
       				["<CR>"] = cmp.mapping.confirm({
         				behavior = cmp.ConfirmBehavior.Replace,
-        				select = true,
+        				select = false,
       				})
     			},
 
@@ -767,7 +771,7 @@ packer.startup(function(use)
 					{ name = "luasnip" },
 					{ name = "calc" },
 					{ name = "path" },
-					{ name = "norg" },
+					{ name = "neorg" },
     			},
   			}
 		end,
