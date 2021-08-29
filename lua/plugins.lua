@@ -32,9 +32,17 @@ packer.startup(function(use)
 	}
 
 	use {
+		"lewis6991/impatient.nvim",
+		opt = true,
+		config = function()
+			require('impatient')
+		end
+	}
+
+	use {
 		"nvim-treesitter/nvim-treesitter",
 		run = ":TSUpdate",
-		opt = true,
+		after = "impatient.nvim",
 		config = function()
 
 			local parser_configs = require('nvim-treesitter.parsers').get_parser_configs()
@@ -208,7 +216,7 @@ packer.startup(function(use)
 	use {
 		"JoosepAlviste/nvim-ts-context-commentstring",
 		requires = { { "Olical/aniseed", after = "nvim-treesitter" } },
-		after = "nvim-treesitter",
+		after = "aniseed",
 	}
 
 	--[[ use {
@@ -244,11 +252,6 @@ packer.startup(function(use)
 		event = "ColorScheme",
 		config = function()
 			require('nvim-autopairs').setup { check_ts = true }
-
-			require('nvim-autopairs.completion.cmp').setup({
-  				map_cr = true,
-  				map_complete = true,
-			})
 		end
 	}
 
@@ -346,8 +349,7 @@ packer.startup(function(use)
 					["core.integrations.telescope"] = {},
 					["core.norg.completion"] = {
 						config = {
-							-- engine = "nvim-cmp",
-							engine = nil,
+							engine = "nvim-cmp",
 						}
 					},
 					--[[ ["core.gtd.base"] = {
@@ -510,7 +512,6 @@ packer.startup(function(use)
 			require('bufferline').setup {
 				options = {
 					numbers = "none",
-					mappings = false,
 					separator_style = "slant",
 					sort_by = "directory",
 					show_buffer_close_icons = false,
@@ -665,8 +666,7 @@ packer.startup(function(use)
 
 	use {
 		"neovim/nvim-lspconfig",
-		-- TODO: Revert when cmp fixes its shit
-		-- event = "ColorScheme"
+		event = "ColorScheme",
 	}
 
 	use {
@@ -737,12 +737,15 @@ packer.startup(function(use)
 
 	use {
 		"hrsh7th/nvim-cmp",
+		after = "nvim-lspconfig",
 		config = function()
 			local cmp = require('cmp')
 
 			cmp.setup {
+				preselect = cmp.PreselectMode.None,
+
 				completion = {
-    				completeopt = "menuone,noselect",
+    				completeopt = "menu,menuone,noselect",
   				},
 
     			snippet = {
@@ -758,11 +761,7 @@ packer.startup(function(use)
       				["<C-u>"] = cmp.mapping.scroll_docs(4),
       				["<C-Space>"] = cmp.mapping.complete(),
       				["<C-c>"] = cmp.mapping.close(),
-      				["<CR>"] = cmp.mapping.confirm({
-        				behavior = cmp.ConfirmBehavior.Replace,
-        				select = false,
-      				})
-    			},
+      			},
 
     			sources = {
       				{ name = "buffer" },
@@ -774,37 +773,37 @@ packer.startup(function(use)
 					{ name = "neorg" },
     			},
   			}
+
+			require('nvim-autopairs.completion.cmp').setup({
+  				map_cr = true,
+  				map_complete = true,
+			})
 		end,
 
 		requires = {
 			{
 				"hrsh7th/cmp-buffer",
-				after = "nvim-cmp",
+				after = "nvim-cmp"
 			},
 			{
 				"hrsh7th/cmp-nvim-lua",
-
-				after = "nvim-cmp",
+				after = "nvim-cmp"
 			},
 			{
 				"hrsh7th/cmp-nvim-lsp",
-
-				after = "nvim-cmp",
+				after = "nvim-cmp"
 			},
 			{
 				"saadparwaiz1/cmp_luasnip",
-
-				after = "nvim-cmp",
+				after = "nvim-cmp"
 			},
 			{
 				"hrsh7th/cmp-calc",
-
-				after = "nvim-cmp",
+				after = "nvim-cmp"
 			},
 			{
 				"hrsh7th/cmp-path",
-
-				after = "nvim-cmp",
+				after = "nvim-cmp"
 			},
 		},
 	}
@@ -855,10 +854,18 @@ packer.startup(function(use)
 	}
 
 	use {
-		"/home/vhyrro/dev/neogen",
+		"danymat/neogen",
 		event = "ColorScheme",
 		config = function()
 			require('neogen').setup({ enabled = true })
+		end,
+	}
+
+	use {
+		"simrat39/rust-tools.nvim",
+		after = "gruvbox-material",
+		config = function()
+			require('rust-tools').setup()
 		end,
 	}
 

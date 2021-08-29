@@ -4,7 +4,10 @@ vim.cmd [[
 	filetype plugin indent off
 ]]
 
+local rtp = vim.opt.runtimepath:get()
+vim.opt.runtimepath = ""
 vim.opt.shadafile = "NONE"
+
 vim.g.loaded_gzip = false
 vim.g.loaded_matchit = false
 vim.g.loaded_netrwPlugin = false
@@ -20,13 +23,14 @@ vim.defer_fn(function()
 	require('plugins')
 
 	vim.opt.shadafile = ""
+	vim.opt.runtimepath = rtp
 	vim.cmd [[
 		rshada!
 		doautocmd BufRead
 		syntax on
 		filetype on
 		filetype plugin indent on
-		PackerLoad nvim-treesitter
+		PackerLoad impatient.nvim
 	]]
 
 	vim.defer_fn(function()
