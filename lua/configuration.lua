@@ -46,7 +46,7 @@ vim.opt.shortmess:append("c")
 vim.opt.ttimeoutlen = 5
 
 -- Set up indenting
-vim.opt.expandtab = false
+vim.opt.expandtab = true
 vim.opt.shiftwidth = 4
 vim.opt.tabstop = 4
 vim.opt.softtabstop = 4
@@ -61,6 +61,9 @@ vim.opt.undodir = "/home/vhyrro/.cache/nvim/undo"
 -- Show previews for substitutions etc.
 vim.opt.inccommand = "split"
 
+-- Make search results case insensitive
+vim.opt.ignorecase = true
+
 function neovhy:on_file_enter()
 
 	-- Enable undo files for every buffer
@@ -73,9 +76,9 @@ function neovhy:on_file_enter()
 	vim.opt.preserveindent = true
 
 	vim.cmd [[
-            if line("'\"") > 1 && line("'\"") <= line("$") |
-                exe "normal! g'\"" |
-            endif
+        if line("'\"") > 1 && line("'\"") <= line("$") |
+            exe "normal! g'\"" |
+        endif
 	]]
 end
 

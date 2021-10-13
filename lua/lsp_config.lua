@@ -8,25 +8,25 @@ local sumneko_binary = vim.fn.stdpath("data") .. "/lspinstall/lua/sumneko-lua-la
 
 lsp_configs["lua"] = require('lua-dev').setup {
 
-	library = {
-		vimruntime = true,
-    	types = true,
-    	plugins = false,
+    library = {
+        vimruntime = true,
+        types = true,
+        plugins = false,
     },
 
-	lspconfig = {
-  		cmd = { sumneko_binary, "-E", sumneko_root_path .. "/main.lua" },
-  		settings = {
-    		Lua = {
-      			telemetry = {
-        			enable = false,
-      			},
-      			workspace = {
-      				preloadFileSize = 180
-      			}
-    		},
-  		},
-	}
+    lspconfig = {
+          cmd = { sumneko_binary, "-E", sumneko_root_path .. "/main.lua" },
+          settings = {
+            Lua = {
+                  telemetry = {
+                    enable = false,
+                  },
+                  workspace = {
+                      preloadFileSize = 180
+                  }
+            },
+          },
+    }
 }
 
 return lsp_configs
