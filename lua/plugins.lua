@@ -5,6 +5,8 @@ vim.cmd("packadd packer.nvim")
 local packer = require('packer')
 
 packer.init({
+    compile_path = vim.fn.stdpath('config') .. "/lua/packer_compiled.lua",
+
     git = {
         clone_timeout = 350,
     },

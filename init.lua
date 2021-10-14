@@ -3,7 +3,8 @@ vim.cmd [[
 	filetype off
 	filetype plugin indent off
 ]]
-
+local rtp = vim.opt.runtimepath:get()
+vim.opt.runtimepath = ""
 vim.opt.shadafile = "NONE"
 
 vim.g.loaded_gzip = false
@@ -16,11 +17,15 @@ vim.g.loaded_2html_plugin = false
 vim.g.loaded_remote_plugins = false
 
 vim.defer_fn(function()
+	vim.opt.shadafile = ""
+ 	vim.opt.runtimepath = rtp
+
 	require('configuration')
 	require('keybinds')
 	require('plugins')
 
-	vim.opt.shadafile = ""
+    require('packer_compiled')
+
 	vim.cmd [[
 		rshada!
 		doautocmd BufRead
