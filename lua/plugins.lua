@@ -234,7 +234,10 @@ packer.startup(function(use)
         "windwp/nvim-autopairs",
         event = "ColorScheme",
         config = function()
-            require('nvim-autopairs').setup { check_ts = true }
+            require('nvim-autopairs').setup {
+                enable_check_bracket_line = false,
+                check_ts = true
+            }
         end
     }
 
@@ -295,7 +298,6 @@ packer.startup(function(use)
     }
 
     use {
-        -- "/home/vhyrro/dev/neorg-gtd",
         "/home/vhyrro/dev/neorg",
         after = "gruvbox-material",
         config = function()
@@ -304,10 +306,13 @@ packer.startup(function(use)
                 -- Select the modules we want to load
                 load = {
                     ["core.defaults"] = {}, -- Load all the defaults
-                    ["core.norg.concealer"] = {}, -- Allows the use of icons
+                    ["core.norg.concealer"] = {
+                        config = {
+                            icon_preset = "diamond",
+                        }
+                    }, -- Allows the use of icons
                     ["core.keybinds"] = {
                         config = {
-                            neorg_leader = "<Leader>i",
                             default_keybinds = true,
                         }
                     },
@@ -666,6 +671,10 @@ packer.startup(function(use)
                     ["<C-c>"] = cmp.mapping.close(),
                 },
 
+                experimental = {
+                    ghost_text = true,
+                },
+
                 sources = {
                     { name = "neorg" },
                     { name = "luasnip" },
@@ -779,7 +788,7 @@ packer.startup(function(use)
     use {
         "/home/vhyrro/dev/generic-neovim-plugin-manager",
         config = function()
-            -- require('plugman').startup()
+            require('plugnplay').startup()
         end,
     }
 
@@ -802,9 +811,9 @@ packer.startup(function(use)
             }
         end,
         requires = {
-		    "nvim-lua/plenary.nvim",
-		    "MunifTanjim/nui.nvim",
-	    },
+            "nvim-lua/plenary.nvim",
+            "MunifTanjim/nui.nvim",
+        },
     }
 
 end)
