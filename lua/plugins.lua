@@ -43,6 +43,7 @@ packer.startup(function(use)
 
     use {
         "nvim-treesitter/nvim-treesitter",
+        -- "/home/vhyrro/dev/nvim-treesitter",
         run = ":TSUpdate",
         module = "impatient",
         config = function()
@@ -665,8 +666,6 @@ packer.startup(function(use)
                 mapping = {
                     ["<C-p>"] = cmp.mapping.select_prev_item(),
                     ["<C-n>"] = cmp.mapping.select_next_item(),
-                    ["<C-d>"] = cmp.mapping.scroll_docs(-4),
-                    ["<C-u>"] = cmp.mapping.scroll_docs(4),
                     ["<C-Space>"] = cmp.mapping.complete(),
                     ["<C-c>"] = cmp.mapping.close(),
                 },
@@ -685,6 +684,13 @@ packer.startup(function(use)
                     { name = "buffer" },
                 },
             }
+
+            cmp.setup.cmdline(":", {
+                sources = {
+                    { name = "path" },
+                    { name = "buffer" },
+                }
+            })
 
             require('nvim-autopairs.completion.cmp').setup({
                 map_cr = true,
@@ -713,6 +719,10 @@ packer.startup(function(use)
                 "hrsh7th/cmp-path",
                 after = "nvim-cmp"
             },
+            {
+                "hrsh7th/cmp-cmdline",
+                after = "nvim-cmp",
+            }
         },
     }
 
@@ -814,6 +824,17 @@ packer.startup(function(use)
             "nvim-lua/plenary.nvim",
             "MunifTanjim/nui.nvim",
         },
+    }
+
+    use {
+        "max397574/startup.nvim",
+        branch = "dev",
+        after = "nvim-treesitter",
+        requires = {"nvim-telescope/telescope.nvim", "nvim-lua/plenary.nvim"},
+        config = function()
+            require"startup".setup(require"startup.themes.evil_startup")
+            -- require"startup".setup()
+        end
     }
 
 end)
