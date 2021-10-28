@@ -692,10 +692,7 @@ packer.startup(function(use)
                 }
             })
 
-            require('nvim-autopairs.completion.cmp').setup({
-                map_cr = true,
-                map_complete = true,
-            })
+            cmp.event:on("confirm_done", require("nvim-autopairs.completion.cmp").on_confirm_done())
         end,
 
         requires = {
