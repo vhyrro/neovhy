@@ -3,6 +3,7 @@ vim.cmd [[
 	filetype off
 	filetype plugin indent off
 ]]
+
 local rtp = vim.opt.runtimepath:get()
 vim.opt.runtimepath = ""
 vim.opt.shadafile = "NONE"
@@ -37,7 +38,7 @@ vim.defer_fn(function()
 
 	vim.defer_fn(function()
 		vim.cmd [[ 
-			PackerLoad gruvbox-material
+			PackerLoad doombox
 			silent! bufdo e
 		]]
 	end, 15)

@@ -220,9 +220,19 @@ packer.startup(function(use)
 
     use {
         "sainnhe/gruvbox-material",
-        opt = true,
+        module = "gruvbox-material",
         config = function()
             vim.cmd("colorscheme gruvbox-material")
+        end
+    }
+
+    use {
+        "/home/vhyrro/dev/doombox.nvim",
+        opt = true,
+        as = "doombox",
+        config = function()
+            require("doombox").setup()
+            vim.cmd("colorscheme doombox")
         end
     }
 
@@ -259,7 +269,7 @@ packer.startup(function(use)
     use {
         "iamcco/markdown-preview.nvim",
         run = "cd app && yarn install",
-        after = "gruvbox-material",
+        after = "doombox",
         config = function()
             vim.g.mkdp_browser = "qutebrowser"
         end
@@ -300,10 +310,9 @@ packer.startup(function(use)
 
     use {
         "/home/vhyrro/dev/neorg",
-        after = "gruvbox-material",
+        after = "doombox",
         config = function()
             require('neorg').setup {
-
                 -- Select the modules we want to load
                 load = {
                     ["core.defaults"] = {}, -- Load all the defaults
@@ -442,7 +451,7 @@ packer.startup(function(use)
 
     use {
         "akinsho/nvim-bufferline.lua",
-        after = "gruvbox-material",
+        after = "doombox",
         config = function()
             require('bufferline').setup {
                 options = {
@@ -571,12 +580,12 @@ packer.startup(function(use)
             end
         end,
 
-        after = "gruvbox-material",
+        after = "doombox",
     }
 
     use {
         "neovim/nvim-lspconfig",
-        event = "ColorScheme",
+        module = "lspconfig",
     }
 
     use {
@@ -630,7 +639,6 @@ packer.startup(function(use)
                 vim.cmd("bufdo e")
             end
         end,
-        requires = "nvim-lspconfig",
         event = "ColorScheme"
     }
 
@@ -668,6 +676,7 @@ packer.startup(function(use)
                     ["<C-n>"] = cmp.mapping.select_next_item(),
                     ["<C-Space>"] = cmp.mapping.complete(),
                     ["<C-c>"] = cmp.mapping.close(),
+                    ["<CR>"] = cmp.mapping.confirm(),
                 },
 
                 experimental = {
@@ -687,6 +696,7 @@ packer.startup(function(use)
 
             cmp.setup.cmdline(":", {
                 sources = {
+                    { name = "cmdline" },
                     { name = "path" },
                     { name = "buffer" },
                 }
@@ -778,7 +788,7 @@ packer.startup(function(use)
 
     use {
         "simrat39/rust-tools.nvim",
-        after = "gruvbox-material",
+        after = "doombox",
         config = function()
             require('rust-tools').setup()
         end,
@@ -786,7 +796,7 @@ packer.startup(function(use)
 
     use {
         "norcalli/nvim-colorizer.lua",
-        after = "gruvbox-material",
+        after = "doombox",
         config = function()
             require('colorizer').setup()
         end,
@@ -801,7 +811,7 @@ packer.startup(function(use)
 
     use {
         "blackCauldron7/surround.nvim",
-        after = "gruvbox-material",
+        after = "doombox",
         config = function()
             require('surround').setup {
                 mappings_style = "sandwich"
@@ -811,7 +821,7 @@ packer.startup(function(use)
 
     use {
         "jameshiew/nvim-magic",
-        after = "gruvbox-material",
+        after = "doombox",
         config = function()
             require('nvim-magic').setup {
                 use_default_keymap = false,
