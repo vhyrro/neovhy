@@ -8,6 +8,7 @@ vim.api.nvim_set_keymap('n', ";", ":", { noremap = true })
 vim.api.nvim_set_keymap('v', ";", ":", { noremap = true })
 vim.api.nvim_set_keymap('n', ":", ";", { noremap = true })
 vim.api.nvim_set_keymap('v', ":", ";", { noremap = true })
+vim.api.nvim_set_keymap("i", "<C-w>", "<C-S-w>", { noremap = true })
 
 -- Prevent changes made to text from landing in the default registers
 vim.api.nvim_set_keymap('n', "c", "\"_c", opts)
@@ -96,8 +97,7 @@ vim.api.nvim_set_keymap('n', "<Leader>ng", ":Neogit<CR>", opts)
 vim.api.nvim_set_keymap('n', "<Leader>gd", ":Neogen<CR>", opts)
 
 -- Keybinds for toggleterm.lua
-vim.api.nvim_set_keymap('n', "<Leader>shf", ":lua require('toggleterm.terminal').Terminal:new { direction = 'float' }:toggle()<CR>", opts)
-vim.api.nvim_set_keymap('n', "<Leader>shr", ":lua require('toggleterm.terminal').Terminal:new { direction = 'vertical' }:toggle()<CR>", opts)
+vim.api.nvim_set_keymap('n', "<Leader>t", ":lua require('toggleterm.terminal').Terminal:new { direction = 'vertical' }:toggle()<CR>", opts)
 
 -- Keybinds for nvim-dap
 vim.api.nvim_set_keymap('n', "<F5>", ":lua require('dap').continue()<CR>", opts)
@@ -125,3 +125,6 @@ vim.api.nvim_set_keymap('n', "<Leader>rs", "<cmd>lua require('persistence').setu
 vim.api.nvim_set_keymap("v", "<Leader>cc", "<Plug>nvim-magic-append-completion", {})
 vim.api.nvim_set_keymap("v", "<Leader>cr", "<Plug>nvim-magic-suggest-alteration", {})
 vim.api.nvim_set_keymap("v", "<Leader>gD", "<Plug>nvim-magic-suggest-docstring", {})
+
+-- Keybinds for nvim-tree
+vim.api.nvim_set_keymap("n", "<Leader>e", ":NvimTreeToggle<CR>", opts)

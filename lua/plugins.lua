@@ -42,34 +42,34 @@ packer.startup(function(use)
     }
 
     use {
+        "nvim-lua/plenary.nvim",
+        module = "plenary",
+    }
+
+    use {
         "nvim-treesitter/nvim-treesitter",
-        -- "/home/vhyrro/dev/nvim-treesitter",
         run = ":TSUpdate",
-        module = "impatient",
+        after = "impatient.nvim",
         config = function()
-
             local parser_configs = require('nvim-treesitter.parsers').get_parser_configs()
-
-            parser_configs.markdown = {
-                install_info = {
-                    url = "https://github.com/ikatyang/tree-sitter-markdown",
-                    files = {"src/parser.c", "src/scanner.cc"}
-                },
-                filetype = "markdown",
-            }
 
             parser_configs.norg = {
                 install_info = {
                     url = "/home/vhyrro/dev/tree-sitter-norg",
-                    -- url = "https://github.com/vhyrro/tree-sitter-norg",
                     files = { "src/parser.c", "src/scanner.cc" },
-                    -- files = { "src/parser.c" },
                     branch = "main",
                 },
             }
 
+            parser_configs.norg_meta = {
+                install_info = {
+                    url = "/home/vhyrro/dev/tree-sitter-norg-meta",
+                    files = { "src/parser.c" },
+                }
+            }
+
             require('nvim-treesitter.configs').setup {
-                ensure_installed = "all",
+                ensure_installed = { "norg", "norg_meta", "lua", "query", "cpp", "c", "rust" },
 
                 highlight = {
                     enable = true
@@ -227,7 +227,7 @@ packer.startup(function(use)
     }
 
     use {
-        "/home/vhyrro/dev/doombox.nvim",
+        "NTBBloodbath/doombox.nvim",
         opt = true,
         as = "doombox",
         config = function()
@@ -259,7 +259,7 @@ packer.startup(function(use)
 
     use {
         "lewis6991/gitsigns.nvim",
-        requires = "nvim-lua/plenary.nvim",
+        requires = "plenary.nvim",
         event = "BufRead",
         config = function()
             require('gitsigns').setup()
@@ -310,6 +310,8 @@ packer.startup(function(use)
 
     use {
         "/home/vhyrro/dev/neorg",
+        --[[ "max397574/neorg",
+        branch = "journal_module", ]]
         after = "doombox",
         config = function()
             require('neorg').setup {
@@ -339,16 +341,12 @@ packer.startup(function(use)
                         }
                     },
                     ["core.integrations.telescope"] = {},
-                    ["core.norg.completion"] = {
-                        config = {
-                            engine = "nvim-cmp",
-                        }
-                    },
                     ["core.gtd.base"] = {
                         config = {
                             workspace = "gtd",
                         }
-                    }
+                    },
+                    -- ["core.norg.journal"] = {},
                 },
 
                 -- Set custom logger settings
@@ -358,7 +356,7 @@ packer.startup(function(use)
 
             }
         end,
-        requires = { "/home/vhyrro/dev/neorg-telescope" }
+        requires = { { "max397574/neorg-telescope", branch = "heading_picker" } }
     }
 
     use {
@@ -399,7 +397,7 @@ packer.startup(function(use)
         "nvim-telescope/telescope.nvim",
         cmd = "Telescope",
         module = "telescope",
-        requires = { "nvim-lua/plenary.nvim", "nvim-lua/popup.nvim" }
+        requires = { "plenary.nvim", { "nvim-lua/popup.nvim", module = "popup" } }
     }
 
     use {
@@ -424,10 +422,10 @@ packer.startup(function(use)
         config = function()
 
             require('toggleterm').setup {
-                size = 90,
+                size = 80,
                 open_mapping = nil,
                 hide_numbers = true, -- hide the number column in toggleterm buffers
-                start_in_insert = false,
+                start_in_insert = true,
                 persist_size = true,
                 direction = "float",
                 shell = vim.o.shell,
@@ -589,57 +587,67 @@ packer.startup(function(use)
     }
 
     use {
-        "kabouzeid/nvim-lspinstall",
+        "williamboman/nvim-lsp-installer",
         config = function()
 
-            local lspconfig, lspinstall = require('lspconfig'), require('lspinstall')
+            local lsp_installer = require('nvim-lsp-installer')
 
-            lspinstall.setup()
+            lsp_installer.on_server_ready(function(server)
+                local function on_attach(_, bufnr)
+                    local opts = { noremap = true, silent = true }
 
-            local configurations = require('lsp_config')
+                    vim.api.nvim_buf_set_keymap(bufnr, "n", "gD", "<cmd>lua vim.lsp.buf.declaration()<CR>", opts)
+                    vim.api.nvim_buf_set_keymap(bufnr, "n", "gd", "<cmd>lua vim.lsp.buf.definition()<CR>", opts)
+                    vim.api.nvim_buf_set_keymap(bufnr, "n", "K", "<cmd>lua vim.lsp.buf.hover()<CR>", opts)
+                    vim.api.nvim_buf_set_keymap(bufnr, "n", "gi", "<cmd>lua vim.lsp.buf.implementation()<CR>", opts)
+                    vim.api.nvim_buf_set_keymap(bufnr, "n", "ge", "<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>", opts)
+                    vim.api.nvim_buf_set_keymap(bufnr, "n", "<C-k>", "<cmd>lua vim.lsp.buf.signature_help()<CR>", opts)
+                    vim.api.nvim_buf_set_keymap(bufnr, "n", "<Leader>da", "<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>", opts)
+                    vim.api.nvim_buf_set_keymap(bufnr, "n", "<Leader>dr", "<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>", opts)
+                    vim.api.nvim_buf_set_keymap(bufnr, "n", "<Leader>rn", "<cmd>lua vim.lsp.buf.rename()<CR>", opts)
+                    vim.api.nvim_buf_set_keymap(bufnr, "n", "<Leader>rf", "<cmd>lua vim.lsp.buf.references()<CR>", opts)
+                    vim.api.nvim_buf_set_keymap(bufnr, "n", "<Leader>ca", "<cmd>lua vim.lsp.buf.code_action()<CR>", opts)
 
-            local setup_servers = function()
-                local installed_servers = lspinstall.installed_servers()
+                    vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, { border = "rounded" })
+                    vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(vim.lsp.handlers.hover, { border = "rounded" })
 
-                for _, server in ipairs(installed_servers) do
-                    lspconfig[server].setup(vim.tbl_extend("force", configurations[server] or {}, {
-                        on_attach = function(_, bufnr)
-                            local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
-
-                            local opts = { noremap = true, silent = true }
-
-                            buf_set_keymap("n", "gD", "<cmd>lua vim.lsp.buf.declaration()<CR>", opts)
-                            buf_set_keymap("n", "gd", "<cmd>lua vim.lsp.buf.definition()<CR>", opts)
-                            buf_set_keymap("n", "K", "<cmd>lua vim.lsp.buf.hover()<CR>", opts)
-                            buf_set_keymap("n", "gi", "<cmd>lua vim.lsp.buf.implementation()<CR>", opts)
-                            buf_set_keymap("n", "<C-k>", "<cmd>lua vim.lsp.buf.signature_help()<CR>", opts)
-                            buf_set_keymap("n", "<Leader>da", "<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>", opts)
-                            buf_set_keymap("n", "<Leader>dr", "<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>", opts)
-                            buf_set_keymap("n", "<Leader>rn", "<cmd>lua vim.lsp.buf.rename()<CR>", opts)
-                            buf_set_keymap("n", "<Leader>rf", "<cmd>lua vim.lsp.buf.references()<CR>", opts)
-                            buf_set_keymap("n", "<Leader>ca", "<cmd>lua vim.lsp.buf.code_action()<CR>", opts)
-                            buf_set_keymap("n", "<Leader>e", "<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>", opts)
-
-                            vim.lsp.handlers["textDocument/hover"] =  vim.lsp.with(vim.lsp.handlers.hover, { border = "rounded" })
-                            vim.lsp.handlers["textDocument/signatureHelp"] =  vim.lsp.with(vim.lsp.handlers.hover, { border = "rounded" })
-
-                            require('lsp_signature').on_attach({
-                                hint_prefix = " ",
-                            })
-                        end
-                    }))
+                    require('lsp_signature').on_attach({
+                        hint_prefix = " ",
+                    })
                 end
-            end
 
-            setup_servers()
+                if server.name == "sumneko_lua" then
+                    server:setup(require('lua-dev').setup {
+                        library = {
+                            vimruntime = true,
+                            types = true,
+                            plugins = false,
+                        },
 
-            -- Automatically reload after `:LspInstall <server>` so we don't have to restart neovim
-            lspinstall.post_install_hook = function()
-                setup_servers()
-                vim.cmd("bufdo e")
-            end
+                        lspconfig = {
+                            settings = {
+                                Lua = {
+                                    telemetry = {
+                                        enable = false,
+                                    },
+                                    workspace = {
+                                        preloadFileSize = 180
+                                    }
+                                },
+                            },
+                            on_attach = on_attach,
+                        }
+                    })
+
+                    return
+                end
+
+                server:setup {
+                    on_attach = on_attach,
+                }
+            end)
         end,
-        event = "ColorScheme"
+        after = "doombox",
     }
 
     use {
@@ -654,7 +662,7 @@ packer.startup(function(use)
 
     use {
         "hrsh7th/nvim-cmp",
-        after = "nvim-lspconfig",
+        event = { "InsertEnter", "CmdlineEnter" },
         config = function()
             local cmp = require('cmp')
 
@@ -698,11 +706,24 @@ packer.startup(function(use)
                 sources = {
                     { name = "cmdline" },
                     { name = "path" },
-                    { name = "buffer" },
                 }
             })
 
             cmp.event:on("confirm_done", require("nvim-autopairs.completion.cmp").on_confirm_done())
+
+            --[[ local neorg = require('neorg')
+
+            local function load_completion()
+                neorg.modules.load_module("core.norg.completion", nil, {
+                    engine = "nvim-cmp"
+                })
+            end
+
+            if neorg.is_loaded() then
+                load_completion()
+            else
+                neorg.callbacks.on_event("core.started", load_completion)
+            end ]]
         end,
 
         requires = {
@@ -828,19 +849,31 @@ packer.startup(function(use)
             }
         end,
         requires = {
-            "nvim-lua/plenary.nvim",
-            "MunifTanjim/nui.nvim",
+            "plenary.nvim",
+            { "MunifTanjim/nui.nvim", module = "nui" },
         },
     }
 
     use {
-        "max397574/startup.nvim",
-        branch = "dev",
-        after = "nvim-treesitter",
-        requires = {"nvim-telescope/telescope.nvim", "nvim-lua/plenary.nvim"},
+        "kyazdani42/nvim-tree.lua",
+        cmd = "NvimTreeToggle",
+        setup = function()
+            vim.g.nvim_tree_quit_on_open = 1
+        end,
         config = function()
-            require"startup".setup(require"startup.themes.evil_startup")
-            -- require"startup".setup()
+            local cb = require('nvim-tree.config').nvim_tree_callback
+
+            require('nvim-tree').setup {
+                view = {
+                    mappings = {
+                        list = {
+                            { key = "O", cb = cb("close_node") },
+                            { key = ",", cb = cb("cd") },
+                            { key = ".", cb = cb("dir_up") },
+                        }
+                    }
+                }
+            }
         end
     }
 
