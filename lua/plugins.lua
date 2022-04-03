@@ -35,10 +35,6 @@ packer.startup(function(use)
 
     use {
         "lewis6991/impatient.nvim",
-        opt = true,
-        config = function()
-            require('impatient')
-        end
     }
 
     use {
@@ -49,27 +45,19 @@ packer.startup(function(use)
     use {
         "nvim-treesitter/nvim-treesitter",
         run = ":TSUpdate",
-        after = "impatient.nvim",
+	    opt = true,
         config = function()
             local parser_configs = require('nvim-treesitter.parsers').get_parser_configs()
 
-            parser_configs.norg = {
+            parser_configs.luap = {
                 install_info = {
-                    url = "/home/vhyrro/dev/tree-sitter-norg",
-                    files = { "src/parser.c", "src/scanner.cc" },
-                    branch = "main",
-                },
-            }
-
-            parser_configs.norg_meta = {
-                install_info = {
-                    url = "/home/vhyrro/dev/tree-sitter-norg-meta",
-                    files = { "src/parser.c" },
+                    url = "~/dev/tree-sitter-luap/",
+                    files = { "src/parser.c" }
                 }
             }
 
             require('nvim-treesitter.configs').setup {
-                ensure_installed = { "norg", "norg_meta", "lua", "query", "cpp", "c", "rust" },
+                ensure_installed = { "lua", "query", "cpp", "c", "rust", "vim" },
 
                 highlight = {
                     enable = true
@@ -194,6 +182,10 @@ packer.startup(function(use)
                     enable = true,
                     filetypes = { "html", "javascript", "javascriptreact", "typescriptreact", "svelte", "vue", "markdown" },
                 },
+
+                endwise = {
+                    enable = true,
+                },
             }
         end
     }
@@ -220,7 +212,8 @@ packer.startup(function(use)
 
     use {
         "sainnhe/gruvbox-material",
-        module = "gruvbox-material",
+        opt = true,
+        -- as = "colourscheme",
         config = function()
             vim.cmd("colorscheme gruvbox-material")
         end
@@ -229,11 +222,21 @@ packer.startup(function(use)
     use {
         "NTBBloodbath/doombox.nvim",
         opt = true,
-        as = "doombox",
+        -- as = "colourscheme",
         config = function()
             require("doombox").setup()
             vim.cmd("colorscheme doombox")
         end
+    }
+
+    use {
+        "rebelot/kanagawa.nvim",
+        opt = true,
+        as = "colourscheme",
+        config  = function()
+            require("kanagawa").setup()
+            vim.cmd("colorscheme kanagawa")
+        end,
     }
 
     use {
@@ -242,14 +245,14 @@ packer.startup(function(use)
     }
 
     use {
-        "windwp/nvim-autopairs",
-        event = "ColorScheme",
+        "ZhiyuanLck/smart-pairs",
         config = function()
-            require('nvim-autopairs').setup {
-                enable_check_bracket_line = false,
-                check_ts = true
-            }
-        end
+            require("pairs"):setup({
+                enter = {
+                    enable_mapping = false,
+                },
+            })
+        end,
     }
 
     use {
@@ -269,7 +272,7 @@ packer.startup(function(use)
     use {
         "iamcco/markdown-preview.nvim",
         run = "cd app && yarn install",
-        after = "doombox",
+        after = "colourscheme",
         config = function()
             vim.g.mkdp_browser = "qutebrowser"
         end
@@ -310,9 +313,7 @@ packer.startup(function(use)
 
     use {
         "/home/vhyrro/dev/neorg",
-        --[[ "max397574/neorg",
-        branch = "journal_module", ]]
-        after = "doombox",
+        after = "nvim-treesitter",
         config = function()
             require('neorg').setup {
                 -- Select the modules we want to load
@@ -321,12 +322,17 @@ packer.startup(function(use)
                     ["core.norg.concealer"] = {
                         config = {
                             icon_preset = "diamond",
+                            -- markup_preset = "dimmed",
                         }
                     }, -- Allows the use of icons
                     ["core.keybinds"] = {
                         config = {
                             default_keybinds = true,
-                        }
+                            -- neorg_leader = "<Leader>o",
+                            hook = function(keybinds)
+                                keybinds.remap_key("traverse-heading", "n", "k", "<M-k>")
+                            end,
+                        },
                     },
                     ["core.norg.dirman"] = { -- Manage Neorg directories
                         config = {
@@ -337,26 +343,45 @@ packer.startup(function(use)
                             },
 
                             autochdir = false,
-                            autodetect = false
+                            default_workspace = "main",
                         }
                     },
-                    ["core.integrations.telescope"] = {},
+                    ["core.integrations.treesitter"] = {
+                        config = {
+                            parser_configs = {
+                                norg = {
+                                    url = "~/dev/tree-sitter-norg"
+                                }
+                            }
+                        }
+                    },
                     ["core.gtd.base"] = {
                         config = {
                             workspace = "gtd",
                         }
                     },
-                    -- ["core.norg.journal"] = {},
+                    ["core.presenter"] = {
+                        config = {
+                            zen_mode = "truezen",
+                        },
+                    },
+                    ["core.norg.journal"] = {},
+                    ["core.export"] = {},
+                    -- ["core.upgrade"] = {},
+                    ["core.export.markdown"] = {
+                        config = {
+                            extensions = "all",
+                        }
+                    },
                 },
 
                 -- Set custom logger settings
                 logger = {
-                    level = "info"
+                    level = "warn"
                 },
-
             }
         end,
-        requires = { { "max397574/neorg-telescope", branch = "heading_picker" } }
+        requires = { "nvim-neorg/neorg-telescope", --[[ { "~/dev/neorg-preview/", rocks = { "pegasus" } } ]] }
     }
 
     use {
@@ -449,7 +474,7 @@ packer.startup(function(use)
 
     use {
         "akinsho/nvim-bufferline.lua",
-        after = "doombox",
+        after = "colourscheme",
         config = function()
             require('bufferline').setup {
                 options = {
@@ -496,15 +521,48 @@ packer.startup(function(use)
     }
 
     use {
-        "b3nj5m1n/kommentary",
-        setup = function()
-            vim.g.kommentary_create_default_mappings = false
-        end,
+        "numToStr/Comment.nvim",
         config = function()
-            vim.api.nvim_set_keymap("n", "<Leader>/", "<Plug>kommentary_line_default", {})
-            vim.api.nvim_set_keymap("v", "<Leader>/", "<Plug>kommentary_visual_default", {})
-        end,
-        event = "ColorScheme"
+            require("Comment").setup({
+                --- Add a space b/w comment and the line
+                ---@type boolean
+                padding = true,
+
+                ---Whether the cursor should stay at its position
+                ---NOTE: This only affects NORMAL mode mappings and doesn"t work with dot-repeat
+                ---@type boolean
+                sticky = true,
+
+                ---LHS of toggle mappings in NORMAL + VISUAL mode
+                ---@type table
+                toggler = {
+                    ---Line-comment toggle keymap
+                    line = "<Leader>/",
+                    ---Block-comment toggle keymap
+                    block = "<Leader>?",
+                },
+
+                ---LHS of operator-pending mappings in NORMAL + VISUAL mode
+                ---@type table
+                opleader = {
+                    ---Line-comment keymap
+                    line = "gc",
+                    ---Block-comment keymap
+                    block = "gb",
+                },
+
+                ---LHS of extra mappings
+                ---@type table
+                extra = {
+                    ---Add comment on the line above
+                    above = "gcO",
+                    ---Add comment on the line below
+                    below = "gco",
+                    ---Add comment at the end of line
+                    eol = "gcA",
+                },
+            })
+        end
     }
 
     use {
@@ -578,7 +636,7 @@ packer.startup(function(use)
             end
         end,
 
-        after = "doombox",
+        after = "colourscheme",
     }
 
     use {
@@ -592,30 +650,29 @@ packer.startup(function(use)
 
             local lsp_installer = require('nvim-lsp-installer')
 
+            local function on_attach(_, bufnr)
+                local opts = { noremap = true, silent = true }
+
+                vim.api.nvim_buf_set_keymap(bufnr, "n", "gD", "<cmd>lua vim.lsp.buf.declaration()<CR>", opts)
+                vim.api.nvim_buf_set_keymap(bufnr, "n", "gd", "<cmd>lua vim.lsp.buf.definition()<CR>", opts)
+                vim.api.nvim_buf_set_keymap(bufnr, "n", "K", "<cmd>lua vim.lsp.buf.hover()<CR>", opts)
+                vim.api.nvim_buf_set_keymap(bufnr, "n", "gi", "<cmd>lua vim.lsp.buf.implementation()<CR>", opts)
+                vim.api.nvim_buf_set_keymap(bufnr, "n", "<C-k>", "<cmd>lua vim.lsp.buf.signature_help()<CR>", opts)
+                vim.api.nvim_buf_set_keymap(bufnr, "n", "<Leader>da", "<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>", opts)
+                vim.api.nvim_buf_set_keymap(bufnr, "n", "<Leader>dr", "<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>", opts)
+                vim.api.nvim_buf_set_keymap(bufnr, "n", "<Leader>rn", "<cmd>lua vim.lsp.buf.rename()<CR>", opts)
+                vim.api.nvim_buf_set_keymap(bufnr, "n", "<Leader>rf", "<cmd>lua vim.lsp.buf.references()<CR>", opts)
+                vim.api.nvim_buf_set_keymap(bufnr, "n", "<Leader>ca", "<cmd>lua vim.lsp.buf.code_action()<CR>", opts)
+
+                vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, { border = "rounded" })
+                vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(vim.lsp.handlers.hover, { border = "rounded" })
+
+                require('lsp_signature').on_attach({
+                    hint_prefix = " ",
+                })
+            end
+
             lsp_installer.on_server_ready(function(server)
-                local function on_attach(_, bufnr)
-                    local opts = { noremap = true, silent = true }
-
-                    vim.api.nvim_buf_set_keymap(bufnr, "n", "gD", "<cmd>lua vim.lsp.buf.declaration()<CR>", opts)
-                    vim.api.nvim_buf_set_keymap(bufnr, "n", "gd", "<cmd>lua vim.lsp.buf.definition()<CR>", opts)
-                    vim.api.nvim_buf_set_keymap(bufnr, "n", "K", "<cmd>lua vim.lsp.buf.hover()<CR>", opts)
-                    vim.api.nvim_buf_set_keymap(bufnr, "n", "gi", "<cmd>lua vim.lsp.buf.implementation()<CR>", opts)
-                    vim.api.nvim_buf_set_keymap(bufnr, "n", "ge", "<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>", opts)
-                    vim.api.nvim_buf_set_keymap(bufnr, "n", "<C-k>", "<cmd>lua vim.lsp.buf.signature_help()<CR>", opts)
-                    vim.api.nvim_buf_set_keymap(bufnr, "n", "<Leader>da", "<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>", opts)
-                    vim.api.nvim_buf_set_keymap(bufnr, "n", "<Leader>dr", "<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>", opts)
-                    vim.api.nvim_buf_set_keymap(bufnr, "n", "<Leader>rn", "<cmd>lua vim.lsp.buf.rename()<CR>", opts)
-                    vim.api.nvim_buf_set_keymap(bufnr, "n", "<Leader>rf", "<cmd>lua vim.lsp.buf.references()<CR>", opts)
-                    vim.api.nvim_buf_set_keymap(bufnr, "n", "<Leader>ca", "<cmd>lua vim.lsp.buf.code_action()<CR>", opts)
-
-                    vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, { border = "rounded" })
-                    vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(vim.lsp.handlers.hover, { border = "rounded" })
-
-                    require('lsp_signature').on_attach({
-                        hint_prefix = " ",
-                    })
-                end
-
                 if server.name == "sumneko_lua" then
                     server:setup(require('lua-dev').setup {
                         library = {
@@ -646,8 +703,13 @@ packer.startup(function(use)
                     on_attach = on_attach,
                 }
             end)
+
+            require("lspconfig").gdscript.setup({
+                on_attach = on_attach,
+            })
+
         end,
-        after = "doombox",
+        after = "colourscheme",
     }
 
     use {
@@ -673,18 +735,18 @@ packer.startup(function(use)
                     completeopt = "menu,menuone,noselect",
                 },
 
-                snippet = {
-                    expand = function(args)
-                        require('luasnip').lsp_expand(args.body)
-                    end
-                },
-
                 mapping = {
                     ["<C-p>"] = cmp.mapping.select_prev_item(),
                     ["<C-n>"] = cmp.mapping.select_next_item(),
                     ["<C-Space>"] = cmp.mapping.complete(),
                     ["<C-c>"] = cmp.mapping.close(),
-                    ["<CR>"] = cmp.mapping.confirm(),
+                    ["<CR>"] = cmp.mapping(function(fallback)
+                        if not cmp.confirm({ select = false }) then
+                            require('pairs.enter').type()
+                        else
+                            fallback()
+                        end
+                    end),
                 },
 
                 experimental = {
@@ -693,7 +755,6 @@ packer.startup(function(use)
 
                 sources = {
                     { name = "neorg" },
-                    { name = "luasnip" },
                     { name = "nvim_lua" },
                     { name = "nvim_lsp" },
                     { name = "calc" },
@@ -709,9 +770,7 @@ packer.startup(function(use)
                 }
             })
 
-            cmp.event:on("confirm_done", require("nvim-autopairs.completion.cmp").on_confirm_done())
-
-            --[[ local neorg = require('neorg')
+            local neorg = require('neorg')
 
             local function load_completion()
                 neorg.modules.load_module("core.norg.completion", nil, {
@@ -723,7 +782,7 @@ packer.startup(function(use)
                 load_completion()
             else
                 neorg.callbacks.on_event("core.started", load_completion)
-            end ]]
+            end
         end,
 
         requires = {
@@ -733,10 +792,6 @@ packer.startup(function(use)
             },
             {
                 "hrsh7th/cmp-nvim-lsp",
-                after = "nvim-cmp"
-            },
-            {
-                "saadparwaiz1/cmp_luasnip",
                 after = "nvim-cmp"
             },
             {
@@ -752,11 +807,6 @@ packer.startup(function(use)
                 after = "nvim-cmp",
             }
         },
-    }
-
-    use {
-        "L3MON4D3/LuaSnip",
-        module = "cmp",
     }
 
     use {
@@ -809,7 +859,7 @@ packer.startup(function(use)
 
     use {
         "simrat39/rust-tools.nvim",
-        after = "doombox",
+        after = "colourscheme",
         config = function()
             require('rust-tools').setup()
         end,
@@ -817,64 +867,50 @@ packer.startup(function(use)
 
     use {
         "norcalli/nvim-colorizer.lua",
-        after = "doombox",
+        after = "colourscheme",
         config = function()
             require('colorizer').setup()
         end,
     }
 
     use {
-        "/home/vhyrro/dev/generic-neovim-plugin-manager",
-        config = function()
-            require('plugnplay').startup()
-        end,
-    }
-
-    use {
-        "blackCauldron7/surround.nvim",
-        after = "doombox",
-        config = function()
-            require('surround').setup {
-                mappings_style = "sandwich"
-            }
-        end,
-    }
-
-    use {
-        "jameshiew/nvim-magic",
-        after = "doombox",
-        config = function()
-            require('nvim-magic').setup {
-                use_default_keymap = false,
-            }
-        end,
-        requires = {
-            "plenary.nvim",
-            { "MunifTanjim/nui.nvim", module = "nui" },
-        },
-    }
-
-    use {
-        "kyazdani42/nvim-tree.lua",
-        cmd = "NvimTreeToggle",
+        "nvim-neo-tree/neo-tree.nvim",
+        cmd = "Neotree",
         setup = function()
-            vim.g.nvim_tree_quit_on_open = 1
+            vim.g.neo_tree_remove_legacy_commands = 1
         end,
         config = function()
-            local cb = require('nvim-tree.config').nvim_tree_callback
-
-            require('nvim-tree').setup {
-                view = {
-                    mappings = {
-                        list = {
-                            { key = "O", cb = cb("close_node") },
-                            { key = ",", cb = cb("cd") },
-                            { key = ".", cb = cb("dir_up") },
-                        }
-                    }
-                }
-            }
+            -- require("neo-tree")
         end
     }
 
+    use {
+        "sunjon/stylish.nvim",
+        after = "colourscheme",
+        config = function()
+            -- vim.ui.menu = require("stylish").ui_menu()
+            -- vim.ui.select = require('stylish').ui_select()
+            -- vim.ui.notify = require('stylish').ui_notification()
+        end,
+    }
+
+    use {
+        "Pocco81/TrueZen.nvim",
+        cmd = "TZAtaraxis",
+        config = function()
+            require("true-zen").setup({})
+        end,
+    }
+
+    use {
+        "RRethy/nvim-treesitter-endwise",
+        after = "nvim-treesitter",
+    }
+
+    --[[ use {
+        "p00f/clangd_extensions.nvim",
+        config = function()
+            require("clangd_extensions").setup({})
+        end,
+    } ]]
 end)

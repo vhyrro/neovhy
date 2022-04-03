@@ -4,6 +4,7 @@ local neovhy = require('neovhy')
 
 -- Set the leader to <Space>
 vim.g.mapleader = " "
+vim.g.maplocalleader = ","
 
 -- General configuration
 vim.opt.termguicolors = true
@@ -36,8 +37,8 @@ vim.opt.splitright = true
 -- Synchronize the system clipboard with neovim's
 vim.opt.clipboard = "unnamedplus"
 
--- Make sure the statusline is always shown
-vim.opt.laststatus = 2
+-- Make sure the statusline is always shown and is global
+vim.opt.laststatus = 3
 
 -- Print shorter messages
 vim.opt.shortmess:append("c")
@@ -64,8 +65,7 @@ vim.opt.inccommand = "split"
 -- Make search results case insensitive
 vim.opt.ignorecase = true
 
-function neovhy:on_file_enter()
-
+function neovhy.on_file_enter()
 	-- Enable undo files for every buffer
 	vim.opt.undofile = true
 

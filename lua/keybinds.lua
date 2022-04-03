@@ -57,7 +57,7 @@ vim.cmd [[
 ]]
 
 -- Bufferline keybind configuration
-vim.api.nvim_set_keymap('n', "<C-c>", ":lua require('bufferline').handle_close_buffer(vim.api.nvim_get_current_buf())<CR>", opts)
+vim.api.nvim_set_keymap('n', "<C-c>", "<cmd>lua require('bufferline').handle_close(vim.api.nvim_get_current_buf())<CR>", opts)
 
 vim.api.nvim_set_keymap('n', "<C-n>", ":BufferLineCycleNext<CR>", opts)
 vim.api.nvim_set_keymap('n', "<C-p>", ":BufferLineCyclePrev<CR>", opts)
@@ -77,8 +77,8 @@ vim.api.nvim_set_keymap('n', "<Leader>fs", ":Telescope lsp_workspace_symbols the
 vim.api.nvim_set_keymap('n', "<Leader>cd", ":Telescope zoxide list theme=get_ivy<CR>", opts)
 
 -- For quicker command insertion
-vim.api.nvim_set_keymap('n', "fc", ":Telescope commands theme=get_ivy<CR>", opts)
-vim.api.nvim_set_keymap('v', "fc", ":Telescope commands theme=get_ivy<CR>", opts)
+vim.api.nvim_set_keymap('n', "<Leader>fc", ":Telescope commands theme=get_ivy<CR>", opts)
+vim.api.nvim_set_keymap('v', "<Leader>fc", ":Telescope commands theme=get_ivy<CR>", opts)
 
 -- Toggle nvim-tree
 vim.api.nvim_set_keymap('n', "<Leader>t", ":NvimTreeToggle<CR>", opts)
@@ -95,6 +95,7 @@ vim.api.nvim_set_keymap('n', "<Leader>ng", ":Neogit<CR>", opts)
 
 -- Keybind for Neogen
 vim.api.nvim_set_keymap('n', "<Leader>gd", ":Neogen<CR>", opts)
+vim.api.nvim_set_keymap('i', "<C-e>", "<cmd>lua require('neogen').jump_next()<CR>", opts)
 
 -- Keybinds for toggleterm.lua
 vim.api.nvim_set_keymap('n', "<Leader>t", ":lua require('toggleterm.terminal').Terminal:new { direction = 'vertical' }:toggle()<CR>", opts)
